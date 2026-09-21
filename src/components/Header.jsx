@@ -1,4 +1,5 @@
 import React from 'react';
+import { CONNECTION_STATUS } from '../constants/connectionStatus';
 
 export function Header({
   connectionStatus,
@@ -31,14 +32,14 @@ export function Header({
     }
 
     switch (connectionStatus) {
-      case 'connected':
+      case CONNECTION_STATUS.CONNECTED:
         return (
           <div className="status-badge connected" role="status" aria-live="polite">
             <span className="status-dot"></span>
             <span>ESP32 ONLINE</span>
           </div>
         );
-      case 'reconnecting':
+      case CONNECTION_STATUS.RECONNECTING:
         return (
           <div className="status-badge reconnecting" role="status" aria-live="polite">
             <span className="status-dot"></span>

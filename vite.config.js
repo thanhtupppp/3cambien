@@ -1,9 +1,10 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import net from 'net';
+import { CONNECTION_STATUS } from './src/constants/connectionStatus.js';
 
 let currentTemps = {
-  status: 'offline',
+  status: CONNECTION_STATUS.OFFLINE,
   uptime: 0,
   deltaAir: null,
   sensors: [
@@ -29,7 +30,7 @@ function createWokwiBridgePlugin() {
 
       client.on('connect', () => {
         console.log('[Wokwi Bridge] ✅ Đã kết nối tới Wokwi Serial qua port 4000!');
-        currentTemps.status = 'connecting';
+        currentTemps.status = CONNECTION_STATUS.CONNECTING;
         startTime = Date.now();
       });
 
@@ -45,7 +46,7 @@ function createWokwiBridgePlugin() {
             currentTemps.sensors[0].temp = parseFloat(t1Match[1]);
             currentTemps.sensors[0].online = true;
             sensorLastSeen[0] = Date.now();
-            currentTemps.status = 'online';
+            currentTemps.status = CONNECTION_STATUS.CONNECTED;
           }
 
           // Parse: T2 Khi ra dan lanh : 51.38 C
@@ -54,7 +55,7 @@ function createWokwiBridgePlugin() {
             currentTemps.sensors[1].temp = parseFloat(t2Match[1]);
             currentTemps.sensors[1].online = true;
             sensorLastSeen[1] = Date.now();
-            currentTemps.status = 'online';
+            currentTemps.status = CONNECTION_STATUS.CONNECTED;
           }
 
           // Parse: T3 Ong gas hoi ve  : 48.19 C
@@ -63,7 +64,7 @@ function createWokwiBridgePlugin() {
             currentTemps.sensors[2].temp = parseFloat(t3Match[1]);
             currentTemps.sensors[2].online = true;
             sensorLastSeen[2] = Date.now();
-            currentTemps.status = 'online';
+            currentTemps.status = CONNECTION_STATUS.CONNECTED;
           }
 
           // Tính ΔTair = T1 khí vào - T2 khí ra khi cả hai cảm biến hợp lệ
@@ -80,12 +81,12 @@ function createWokwiBridgePlugin() {
 
       client.on('error', () => {
         // Wokwi chưa bật port 4000 hoặc đã dừng
-        currentTemps.status = 'offline';
+        currentTemps.status = CONNECTION_STATUS.OFFLINE;
       });
 
       client.on('close', () => {
         client = null;
-        currentTemps.status = 'offline';
+        currentTemps.status = CONNECTION_STATUS.OFFLINE;
         setTimeout(connectToWokwi, 2000);
       });
     } catch {
@@ -109,7 +110,7 @@ function createWokwiBridgePlugin() {
             sensor.online = false;
           }
         });
-        if (!currentTemps.sensors.some((sensor) => sensor.online)) currentTemps.status = 'offline';
+        if (!currentTemps.sensors.some((sensor) => sensor.online)) currentTemps.status = CONNECTION_STATUS.OFFLINE;
         if (!currentTemps.sensors[0].online || !currentTemps.sensors[1].online) currentTemps.deltaAir = null;
         currentTemps.uptime = now - startTime;
 

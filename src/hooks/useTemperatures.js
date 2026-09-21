@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { getTemperatures } from '../services/api';
 import { calculateDeltaAir } from '../utils/temperatureMetrics';
 import { statusAfterFailure, statusAfterSuccess } from '../utils/connectionTransitions';
+import { CONNECTION_STATUS } from '../constants/connectionStatus';
 
 /**
  * Custom Hook quản lý dữ liệu nhiệt độ, lịch sử và trạng thái kết nối với ESP32
@@ -23,7 +24,7 @@ export function useTemperatures(initialInterval = 1500) {
   })();
 
   const [data, setData] = useState({
-    status: 'demo',
+    status: CONNECTION_STATUS.DEMO,
     uptime: 125000,
     deltaAir: 5.0,
     sensors: [
@@ -33,7 +34,7 @@ export function useTemperatures(initialInterval = 1500) {
     ]
   });
   const [history, setHistory] = useState(initialHistory);
-  const [connectionStatus, setConnectionStatus] = useState('demo'); // 'connecting' | 'connected' | 'reconnecting' | 'offline' | 'demo'
+  const [connectionStatus, setConnectionStatus] = useState(CONNECTION_STATUS.DEMO)
   const [pollingInterval, setPollingInterval] = useState(initialInterval);
   const [logs, setLogs] = useState([
     { id: 1, time: new Date().toLocaleTimeString('vi-VN', { hour12: false }), type: 'info', message: 'Khởi chạy giao diện Neumorphism (Soft UI)' },
@@ -48,7 +49,7 @@ export function useTemperatures(initialInterval = 1500) {
   const failCountRef = useRef(0);
   const isMountedRef = useRef(true);
   const requestControllerRef = useRef(null);
-  const connectionStatusRef = useRef('demo');
+  const connectionStatusRef = useRef(CONNECTION_STATUS.DEMO);
 
   const addLog = useCallback((type, message) => {
     const time = new Date().toLocaleTimeString('vi-VN', { hour12: false });
@@ -79,7 +80,7 @@ export function useTemperatures(initialInterval = 1500) {
     const deltaAir = calculateDeltaAir(t1, t2);
 
     const demoPayload = {
-      status: 'demo',
+      status: CONNECTION_STATUS.DEMO,
       uptime: Date.now() % 10000000,
       deltaAir,
       sensors: [
@@ -90,7 +91,7 @@ export function useTemperatures(initialInterval = 1500) {
     };
 
     setData(demoPayload);
-    setConnectionStatus('demo');
+    setConnectionStatus(CONNECTION_STATUS.DEMO);
     setLastUpdated(now);
     setHistory((prev) => [
       ...prev.slice(-29),
@@ -117,7 +118,7 @@ export function useTemperatures(initialInterval = 1500) {
       setData(res);
       setLastUpdated(new Date());
 
-      if (failCountRef.current > 0 || connectionStatusRef.current !== 'connected') {
+      if (failCountRef.current > 0 || connectionStatusRef.current !== CONNECTION_STATUS.CONNECTED) {
         addLog('success', 'Kết nối thành công với ESP32');
       }
 

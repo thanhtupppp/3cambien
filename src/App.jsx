@@ -8,6 +8,7 @@ import { EventLog } from './components/EventLog';
 import { ControlPanel } from './components/ControlPanel';
 import { TxvTuner } from './components/TxvTuner';
 import { calculateDeltaAir } from './utils/temperatureMetrics';
+import { CONNECTION_STATUS, isOnlineConnectionStatus } from './constants/connectionStatus';
 
 export default function App() {
   const [theme, setTheme] = React.useState(() => {
@@ -106,7 +107,7 @@ export default function App() {
       </nav>
 
       {/* Guide Banner if Offline */}
-      {connectionStatus === 'offline' && !isDemoMode && (
+      {connectionStatus === CONNECTION_STATUS.OFFLINE && !isDemoMode && (
         <div className="neu-panel offline-banner">
           <div className="offline-banner-icon">⚠️</div>
           <div className="offline-banner-text">
@@ -133,7 +134,7 @@ export default function App() {
           liveT1={t1}
           liveT2={t2}
           liveT3={t3}
-          isOnline={connectionStatus === 'connected' || connectionStatus === 'demo'}
+          isOnline={isOnlineConnectionStatus(connectionStatus)}
         />
       )}
 

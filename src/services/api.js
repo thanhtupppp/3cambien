@@ -1,3 +1,5 @@
+import { CONNECTION_STATUS } from '../constants/connectionStatus.js';
+
 const REQUEST_TIMEOUT_MS = 3000;
 const FALLBACK_API_URL = import.meta.env.VITE_TEMPERATURE_API_URL || 'http://localhost:8180/api/temperatures';
 
@@ -37,7 +39,7 @@ export async function getTemperatures(signal) {
   try {
     try {
       const bridgeData = await fetchTemperatureEndpoint('/api/temperatures', effectiveSignal);
-      if (bridgeData.status === 'online' || bridgeData.sensors.some((sensor) => sensor.online)) {
+      if (bridgeData.status === CONNECTION_STATUS.CONNECTED || bridgeData.sensors.some((sensor) => sensor.online)) {
         return bridgeData;
       }
     } catch (error) {

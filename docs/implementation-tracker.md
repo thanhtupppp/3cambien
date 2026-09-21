@@ -24,7 +24,7 @@ Status values: Not Started / In Progress / Blocked / In Review / Done
 | M-03 | Xử lý thresholdType dead code | thanhtupppp | Done | 2026-09-22 | 2026-09-22 |  | removed unused thresholdType |
 | M-04 | Ổn định polling effect dependencies | thanhtupppp | Done | 2026-09-22 | 2026-09-22 |  | connectionStatus removed from fetchData dependency |
 | M-05 | Chuẩn hóa cách truyền isOnline | thanhtupppp | Done | 2026-09-22 | 2026-09-22 |  | App passes online only for connected/demo |
-| M-06 | Tách rõ connection mode enum | thanhtupppp | In Progress | 2026-09-22 |  |  |  |
+| M-06 | Tách rõ connection mode enum | thanhtupppp | Done | 2026-09-22 | 2026-09-22 |  | src/constants/connectionStatus.js + shared enum usage across hook/App/Header/API/bridge |
 | M-07 | Đưa API endpoint sang env config | thanhtupppp | Done | 2026-09-22 | 2026-09-22 |  | VITE_TEMPERATURE_API_URL fallback endpoint |
 | M-08 | Tách Wokwi bridge khỏi vite.config.js | thanhtupppp | Not Started |  |  |  |  |
 | M-09 | Chuẩn hóa error handling | thanhtupppp | Not Started |  |  |  |  |
