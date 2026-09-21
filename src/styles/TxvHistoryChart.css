@@ -1,0 +1,121 @@
+/* TxvHistoryChart
+   Component-scoped TXV styles. Class names intentionally unchanged. */
+@scope (.txv-container) {
+.txv-chart-container {
+  margin-top: 1.5rem;
+  padding: 1.5rem;
+  border-radius: var(--neu-radius-lg);
+  background: var(--neu-surface);
+  box-shadow: var(--neu-shadow-raised);
+}
+
+.txv-chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.txv-chart-title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--neu-ink);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.txv-chart-legend {
+  display: flex;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.82rem;
+  color: var(--neu-ink-muted);
+  font-weight: 600;
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.legend-box {
+  width: 14px;
+  height: 10px;
+  border-radius: 2px;
+}
+
+.txv-chart-wrapper {
+  position: relative;
+  overflow-x: auto;
+  padding: 10px 0;
+  display: flex;
+  justify-content: center;
+}
+
+.txv-chart-svg {
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--neu-radius-sm);
+  background: var(--neu-surface);
+  box-shadow: var(--neu-shadow-pressed-sm);
+  padding: 8px;
+}
+
+.txv-chart-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem;
+  color: var(--neu-ink-muted);
+  font-size: 0.9rem;
+}
+
+.empty-icon {
+  font-size: 2.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.txv-chart-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1rem;
+  margin-top: 1.25rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--neu-border);
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 10px 14px;
+  border-radius: var(--neu-radius-sm);
+  background: var(--neu-surface);
+  box-shadow: var(--neu-shadow-raised-xs);
+}
+
+.stat-label {
+  font-size: 0.72rem;
+  color: var(--neu-ink-muted);
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+.stat-value {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--neu-ink);
+  font-family: var(--font-mono);
+}
+}
