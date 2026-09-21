@@ -131,7 +131,7 @@ export default function App() {
 
       {/* Tab: Giám Sát Cảm Biến Dàn Lạnh */}
       {(activeTab === 'monitor' || activeTab === 'all') && (
-        <>
+        <div className="monitor-workspace">
           {/* 3 Temperature Cards */}
           <section className="cards-grid">
             {sensors.map((sensor, idx) => (
@@ -153,7 +153,7 @@ export default function App() {
 
           {/* Event Log */}
           <EventLog logs={logs} />
-        </>
+        </div>
       )}
     </div>
   );
