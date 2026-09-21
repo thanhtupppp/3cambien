@@ -10,7 +10,11 @@ import { TxvTuner } from './components/TxvTuner';
 import { calculateDeltaAir } from './utils/temperatureMetrics';
 
 export default function App() {
-  const [theme, setTheme] = React.useState('light');
+  const [theme, setTheme] = React.useState(() => {
+    const saved = localStorage.getItem('dashboard-theme');
+    if (saved === 'light' || saved === 'dark') return saved;
+    return window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  });
 
   const toggleTheme = () => {
     setTheme((prev) => {
@@ -22,6 +26,7 @@ export default function App() {
 
   React.useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('dashboard-theme', theme);
   }, [theme]);
 
   const {
