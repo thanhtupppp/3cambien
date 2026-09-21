@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import '../styles/TxvHistoryChart.css';
 
 // Constants
 const CHART_WIDTH = 800;
