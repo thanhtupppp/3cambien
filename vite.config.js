@@ -1,0 +1,113 @@
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import net from 'net';
+
+let currentTemps = {
+  status: 'offline',
+  uptime: 0,
+  deltaT: null,
+  sensors: [
+    { id: 0, name: 'T1 Khi vao dan lanh', temp: null, online: false },
+    { id: 1, name: 'T2 Khi ra dan lanh', temp: null, online: false },
+    { id: 2, name: 'T3 Ong gas hoi ve', temp: null, online: false }
+  ]
+};
+
+let startTime = Date.now();
+
+function createWokwiBridgePlugin() {
+  let client = null;
+  let buffer = '';
+
+  function connectToWokwi() {
+    if (client) return;
+
+    try {
+      client = net.createConnection({ port: 4000, host: '127.0.0.1' });
+
+      client.on('connect', () => {
+        console.log('[Wokwi Bridge] ✅ Đã kết nối tới Wokwi Serial qua port 4000!');
+        currentTemps.status = 'online';
+        startTime = Date.now();
+      });
+
+      client.on('data', (data) => {
+        buffer += data.toString();
+        const lines = buffer.split('\n');
+        buffer = lines.pop(); // giữ lại đoạn chưa hết dòng
+
+        for (const line of lines) {
+          // Parse: T1 Khi vao dan lanh: -7.50 C
+          const t1Match = line.match(/T1 Khi vao dan lanh\s*:\s*(-?[\d.]+)\s*C/);
+          if (t1Match) {
+            currentTemps.sensors[0].temp = parseFloat(t1Match[1]);
+            currentTemps.sensors[0].online = true;
+            currentTemps.status = 'online';
+          }
+
+          // Parse: T2 Khi ra dan lanh : 51.38 C
+          const t2Match = line.match(/T2 Khi ra dan lanh\s*:\s*(-?[\d.]+)\s*C/);
+          if (t2Match) {
+            currentTemps.sensors[1].temp = parseFloat(t2Match[1]);
+            currentTemps.sensors[1].online = true;
+            currentTemps.status = 'online';
+          }
+
+          // Parse: T3 Ong gas hoi ve  : 48.19 C
+          const t3Match = line.match(/T3 Ong gas hoi ve\s*:\s*(-?[\d.]+)\s*C/);
+          if (t3Match) {
+            currentTemps.sensors[2].temp = parseFloat(t3Match[1]);
+            currentTemps.sensors[2].online = true;
+            currentTemps.status = 'online';
+          }
+
+          // Tính deltaT nếu cả 2 cảm biến T1, T2 đều có giá trị
+          const s1 = currentTemps.sensors[0].temp;
+          const s2 = currentTemps.sensors[1].temp;
+          if (s1 !== null && s2 !== null) {
+            currentTemps.deltaT = parseFloat((s2 - s1).toFixed(2));
+          }
+          currentTemps.uptime = Date.now() - startTime;
+        }
+      });
+
+      client.on('error', () => {
+        // Wokwi chưa bật port 4000 hoặc đã dừng
+        currentTemps.status = 'offline';
+      });
+
+      client.on('close', () => {
+        client = null;
+        currentTemps.status = 'offline';
+        setTimeout(connectToWokwi, 2000);
+      });
+    } catch {
+      client = null;
+    }
+  }
+
+  // Khởi động kết nối ngầm
+  connectToWokwi();
+  setInterval(() => {
+    if (!client) connectToWokwi();
+  }, 3000);
+
+  return {
+    name: 'wokwi-bridge',
+    configureServer(server) {
+      server.middlewares.use('/api/temperatures', (req, res) => {
+        res.setHeader('Content-Type', 'application/json');
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.end(JSON.stringify(currentTemps));
+      });
+    }
+  };
+}
+
+export default defineConfig({
+  plugins: [react(), createWokwiBridgePlugin()],
+  server: {
+    port: 5173,
+    host: true
+  }
+});
