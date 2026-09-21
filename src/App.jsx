@@ -128,7 +128,7 @@ export default function App() {
           liveT1={t1}
           liveT2={t2}
           liveT3={t3}
-          isOnline={connectionStatus !== 'offline'}
+          isOnline={connectionStatus === 'connected' || connectionStatus === 'demo'}
         />
       )}
 
