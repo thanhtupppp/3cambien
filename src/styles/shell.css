@@ -1,0 +1,515 @@
+/* App shell: header, connection banner, simulator controls.
+   Scoped so generic control classes cannot leak outside this dashboard. */
+@scope (.app-container) {
+/* --------------------------------------------------------------------------
+   Header Component
+   -------------------------------------------------------------------------- */
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 28px;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.header-logo {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--neu-radius-md);
+  background: var(--neu-surface);
+  box-shadow: var(--neu-shadow-raised-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  border: 1px solid var(--neu-border);
+}
+
+.header-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--neu-ink);
+}
+
+.header-subtitle {
+  font-size: 0.85rem;
+  color: var(--neu-ink-muted);
+  margin-top: 3px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+/* Neumorphic Status Badge */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: var(--neu-radius-full);
+  background: var(--neu-surface);
+  box-shadow: var(--neu-shadow-pressed-sm);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.status-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.status-badge.demo {
+  color: var(--color-purple);
+}
+.status-badge.demo .status-dot {
+  background: var(--color-purple);
+  box-shadow: 0 0 8px var(--color-purple);
+}
+
+.status-badge.connected {
+  color: var(--color-optimal);
+}
+.status-badge.connected .status-dot {
+  background: var(--color-optimal);
+  box-shadow: 0 0 8px var(--color-optimal);
+}
+
+.status-badge.offline {
+  color: var(--color-danger);
+}
+.status-badge.offline .status-dot {
+  background: var(--color-danger);
+  box-shadow: 0 0 8px var(--color-danger);
+}
+
+.status-badge.reconnecting {
+  color: var(--color-warning);
+}
+.status-badge.reconnecting .status-dot {
+  background: var(--color-warning);
+  box-shadow: 0 0 8px var(--color-warning);
+}
+
+/* Neumorphic Buttons */
+.btn-demo,
+.btn-refresh,
+.btn-theme,
+.neu-button {
+  min-height: var(--neu-target-min);
+  padding: 9px 18px;
+  background: var(--neu-surface);
+  color: var(--neu-ink);
+  border: 1px solid var(--neu-border);
+  border-radius: var(--neu-radius-md);
+  box-shadow: var(--neu-shadow-raised-sm);
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.btn-demo:hover,
+.btn-refresh:hover,
+.btn-theme:hover,
+.neu-button:hover {
+  box-shadow: var(--neu-shadow-raised);
+  transform: translateY(-1px);
+}
+
+.btn-demo:active,
+.btn-refresh:active,
+.btn-theme:active,
+.neu-button:active {
+  box-shadow: var(--neu-shadow-pressed);
+  transform: translateY(1px);
+}
+
+.btn-demo.active {
+  box-shadow: var(--neu-shadow-pressed);
+  color: var(--color-purple);
+  font-weight: 700;
+}
+
+.btn-refresh {
+  padding: 9px 14px;
+  font-size: 1rem;
+}
+
+.btn-theme {
+  padding: 9px 14px;
+  font-size: 1rem;
+}
+
+/* Recessed Uptime Display */
+.uptime-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: var(--neu-radius-sm);
+  background: var(--neu-surface);
+  box-shadow: var(--neu-shadow-pressed-sm);
+  font-size: 0.82rem;
+}
+
+.uptime-label {
+  color: var(--neu-ink-muted);
+}
+
+.uptime-val {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: var(--neu-ink);
+}
+
+/* Recessed Select Dropdown */
+.interval-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.interval-label {
+  font-size: 0.82rem;
+  color: var(--neu-ink-muted);
+  font-weight: 500;
+}
+
+.interval-select {
+  padding: 8px 12px;
+  background: var(--neu-surface);
+  color: var(--neu-ink);
+  border: 1px solid var(--neu-border);
+  border-radius: var(--neu-radius-sm);
+  box-shadow: var(--neu-shadow-pressed-sm);
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+  transition: box-shadow 0.2s ease;
+}
+
+.interval-select:focus {
+  box-shadow: var(--neu-shadow-pressed);
+}
+
+/* --------------------------------------------------------------------------
+   Offline Banner
+   -------------------------------------------------------------------------- */
+.offline-banner {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 18px 24px;
+  border-radius: var(--neu-radius-md);
+  border-left: 4px solid var(--color-warning);
+}
+
+.offline-banner-icon {
+  font-size: 28px;
+}
+
+.offline-banner-text h4 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+  color: var(--neu-ink);
+}
+
+.offline-banner-text p {
+  font-size: 0.85rem;
+  color: var(--neu-ink-muted);
+  line-height: 1.45;
+}
+
+/* --------------------------------------------------------------------------
+   Control Panel (Neumorphic Demo Simulator)
+   -------------------------------------------------------------------------- */
+.control-panel {
+  padding: 24px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.control-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.control-title-box {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.control-icon {
+  font-size: 24px;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--neu-radius-md);
+  background: var(--neu-surface);
+  box-shadow: var(--neu-shadow-raised-sm);
+}
+
+.control-title-box h4 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--neu-ink);
+}
+
+.control-subtitle {
+  font-size: 0.82rem;
+  color: var(--neu-ink-muted);
+  margin-top: 2px;
+}
+
+.btn-toggle-sim {
+  padding: 9px 18px;
+  border-radius: var(--neu-radius-md);
+  background: var(--neu-surface);
+  color: var(--neu-ink);
+  border: 1px solid var(--neu-border);
+  box-shadow: var(--neu-shadow-raised-sm);
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-toggle-sim:hover {
+  box-shadow: var(--neu-shadow-raised);
+}
+
+.btn-toggle-sim.active {
+  box-shadow: var(--neu-shadow-pressed);
+  color: var(--color-optimal);
+  font-weight: 700;
+}
+
+/* Sliders Grid */
+.sliders-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.slider-item {
+  padding: 16px 18px;
+  border-radius: var(--neu-radius-md);
+  background: var(--neu-surface);
+  box-shadow: var(--neu-shadow-raised-xs);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.slider-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.slider-name {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--neu-ink);
+}
+
+.slider-val {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 3px 10px;
+  border-radius: var(--neu-radius-sm);
+  background: var(--neu-surface);
+  box-shadow: var(--neu-shadow-pressed-sm);
+}
+
+.slider-val.t1 { color: var(--color-cold); }
+.slider-val.t2 { color: var(--color-warning); }
+.slider-val.t3 { color: var(--color-purple); }
+
+/* Tactile Neumorphic Range Input */
+.slider-input {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 10px;
+  border-radius: var(--neu-radius-full);
+  background: var(--neu-surface);
+  box-shadow: var(--neu-shadow-pressed);
+  outline: none;
+  cursor: pointer;
+  margin: 6px 0;
+}
+
+/* Slider Thumb - Extruded Tactile Disc */
+.slider-input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--neu-surface);
+  box-shadow: 3px 3px 6px var(--neu-shadow-dark), -3px -3px 6px var(--neu-shadow-light);
+  border: 2px solid var(--neu-border);
+  cursor: grab;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.slider-input::-moz-range-thumb {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--neu-surface);
+  box-shadow: 3px 3px 6px var(--neu-shadow-dark), -3px -3px 6px var(--neu-shadow-light);
+  border: 2px solid var(--neu-border);
+  cursor: grab;
+}
+
+.slider-input:active::-webkit-slider-thumb {
+  cursor: grabbing;
+  transform: scale(1.08);
+  box-shadow: inset 2px 2px 4px var(--neu-shadow-dark), inset -2px -2px 4px var(--neu-shadow-light);
+}
+
+.slider-input.t1::-webkit-slider-thumb { border-color: var(--color-cold); }
+.slider-input.t2::-webkit-slider-thumb { border-color: var(--color-warning); }
+.slider-input.t3::-webkit-slider-thumb { border-color: var(--color-purple); }
+
+.slider-range-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.72rem;
+  color: var(--neu-ink-muted);
+  font-family: var(--font-mono);
+}
+
+/* Preset Buttons */
+.presets-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding-top: 6px;
+}
+
+.presets-label {
+  font-size: 0.8rem;
+  color: var(--neu-ink-muted);
+  font-weight: 600;
+}
+
+.btn-preset {
+  padding: 7px 14px;
+  border-radius: var(--neu-radius-sm);
+  background: var(--neu-surface);
+  color: var(--neu-ink);
+  border: 1px solid var(--neu-border);
+  box-shadow: var(--neu-shadow-raised-xs);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-preset:hover {
+  box-shadow: var(--neu-shadow-raised-sm);
+  transform: translateY(-1px);
+}
+
+.btn-preset:active {
+  box-shadow: var(--neu-shadow-pressed-sm);
+  transform: translateY(1px);
+}
+
+/* --------------------------------------------------------------------------
+   Neumorphic Tabs Navigation
+   -------------------------------------------------------------------------- */
+.neu-tabs-nav {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.neu-tab-btn {
+  padding: 12px 22px;
+  border-radius: var(--neu-radius-md);
+  background: var(--neu-surface);
+  color: var(--neu-ink);
+  border: 1px solid var(--neu-border);
+  box-shadow: var(--neu-shadow-raised-sm);
+  font-family: inherit;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+  user-select: none;
+}
+
+.neu-tab-btn:hover {
+  box-shadow: var(--neu-shadow-raised);
+  transform: translateY(-1px);
+}
+
+.neu-tab-btn:active {
+  box-shadow: var(--neu-shadow-pressed);
+  transform: translateY(1px);
+}
+
+.neu-tab-btn.active {
+  box-shadow: var(--neu-shadow-pressed);
+  color: var(--color-accent);
+  font-weight: 700;
+}
+
+.tab-icon {
+  font-size: 1.1rem;
+}
+
+  @media (max-width: 768px) {
+    .header-container,
+    .control-panel {
+      padding: 18px;
+    }
+
+    .header-right {
+      width: 100%;
+      justify-content: space-between;
+    }
+  }
+}
