@@ -7,6 +7,7 @@ import { RealtimeChart } from './components/RealtimeChart';
 import { EventLog } from './components/EventLog';
 import { ControlPanel } from './components/ControlPanel';
 import { TxvTuner } from './components/TxvTuner';
+import { calculateDeltaAir } from './utils/temperatureMetrics';
 
 export default function App() {
   const [theme, setTheme] = React.useState('light');
@@ -48,7 +49,9 @@ export default function App() {
   const t1 = sensors[0]?.online ? sensors[0].temp : null;
   const t2 = sensors[1]?.online ? sensors[1].temp : null;
   const t3 = sensors[2]?.online ? sensors[2].temp : null;
-  const deltaT = data?.deltaT ?? (t1 !== null && t2 !== null ? t2 - t1 : null);
+  const deltaAir = Number.isFinite(data?.deltaAir)
+    ? data.deltaAir
+    : calculateDeltaAir(t1, t2);
 
   const [activeTab, setActiveTab] = React.useState('txv'); // 'txv' | 'monitor' | 'all'
 
@@ -146,7 +149,7 @@ export default function App() {
           </section>
 
           {/* Delta T Performance Metric */}
-          <DeltaMetric t1={t1} t2={t2} deltaT={deltaT} />
+          <DeltaMetric t1={t1} t2={t2} deltaAir={deltaAir} />
 
           {/* Real-time Line Chart */}
           <RealtimeChart history={history} />
