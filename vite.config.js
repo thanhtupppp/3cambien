@@ -14,6 +14,8 @@ let currentTemps = {
 };
 
 let startTime = Date.now();
+const SENSOR_TTL_MS = 5000;
+const sensorLastSeen = [0, 0, 0];
 
 function createWokwiBridgePlugin() {
   let client = null;
@@ -27,7 +29,7 @@ function createWokwiBridgePlugin() {
 
       client.on('connect', () => {
         console.log('[Wokwi Bridge] ✅ Đã kết nối tới Wokwi Serial qua port 4000!');
-        currentTemps.status = 'online';
+        currentTemps.status = 'connecting';
         startTime = Date.now();
       });
 
@@ -42,6 +44,7 @@ function createWokwiBridgePlugin() {
           if (t1Match) {
             currentTemps.sensors[0].temp = parseFloat(t1Match[1]);
             currentTemps.sensors[0].online = true;
+            sensorLastSeen[0] = Date.now();
             currentTemps.status = 'online';
           }
 
@@ -50,6 +53,7 @@ function createWokwiBridgePlugin() {
           if (t2Match) {
             currentTemps.sensors[1].temp = parseFloat(t2Match[1]);
             currentTemps.sensors[1].online = true;
+            sensorLastSeen[1] = Date.now();
             currentTemps.status = 'online';
           }
 
@@ -58,14 +62,17 @@ function createWokwiBridgePlugin() {
           if (t3Match) {
             currentTemps.sensors[2].temp = parseFloat(t3Match[1]);
             currentTemps.sensors[2].online = true;
+            sensorLastSeen[2] = Date.now();
             currentTemps.status = 'online';
           }
 
           // Tính ΔTair = T1 khí vào - T2 khí ra khi cả hai cảm biến hợp lệ
           const s1 = currentTemps.sensors[0].temp;
           const s2 = currentTemps.sensors[1].temp;
-          if (s1 !== null && s2 !== null) {
+          if (currentTemps.sensors[0].online && currentTemps.sensors[1].online && s1 !== null && s2 !== null) {
             currentTemps.deltaAir = parseFloat((s1 - s2).toFixed(2));
+          } else {
+            currentTemps.deltaAir = null;
           }
           currentTemps.uptime = Date.now() - startTime;
         }
@@ -96,6 +103,16 @@ function createWokwiBridgePlugin() {
     name: 'wokwi-bridge',
     configureServer(server) {
       server.middlewares.use('/api/temperatures', (req, res) => {
+        const now = Date.now();
+        currentTemps.sensors.forEach((sensor, index) => {
+          if (sensorLastSeen[index] && now - sensorLastSeen[index] > SENSOR_TTL_MS) {
+            sensor.online = false;
+          }
+        });
+        if (!currentTemps.sensors.some((sensor) => sensor.online)) currentTemps.status = 'offline';
+        if (!currentTemps.sensors[0].online || !currentTemps.sensors[1].online) currentTemps.deltaAir = null;
+        currentTemps.uptime = now - startTime;
+
         res.setHeader('Content-Type', 'application/json');
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.end(JSON.stringify(currentTemps));
