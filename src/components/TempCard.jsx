@@ -1,4 +1,5 @@
 import React from 'react';
+import { getSensorStatus } from '../utils/sensorStatus';
 
 export function TempCard({ index, name, temp, online }) {
   // Cấu hình icon và đặc tính theo cảm biến
@@ -7,31 +8,20 @@ export function TempCard({ index, name, temp, online }) {
       role: 'Khí vào dàn lạnh',
       icon: '❄️',
       colorClass: 'card-t1',
-      thresholdType: 'cold', // càng lạnh càng tốt
     },
     {
       role: 'Khí ra dàn lạnh',
       icon: '💨',
       colorClass: 'card-t2',
-      thresholdType: 'medium',
     },
     {
       role: 'Ống gas hồi về',
       icon: '🌡️',
       colorClass: 'card-t3',
-      thresholdType: 'gas',
     }
   ][index] || { role: 'Cảm biến nhiệt', icon: '🌡️', colorClass: 'card-t1' };
 
-  const getStatusLabel = () => {
-    if (!online || temp === null) return { text: 'MẤT TÍN HIỆU', class: 'status-error' };
-    if (temp < 0) return { text: 'LẠNH SÂU', class: 'status-cold' };
-    if (temp <= 15) return { text: 'ĐẠT CHUẨN', class: 'status-optimal' };
-    if (temp <= 35) return { text: 'BÌNH THƯỜNG', class: 'status-normal' };
-    return { text: 'QUÁ NHIỆT', class: 'status-warning' };
-  };
-
-  const status = getStatusLabel();
+  const status = getSensorStatus(index, temp, online);
 
   return (
     <div className={`glass-panel temp-card ${config.colorClass} ${!online ? 'card-offline' : ''}`}>
@@ -58,7 +48,7 @@ export function TempCard({ index, name, temp, online }) {
       </div>
 
       <div className="card-footer">
-        <span className={`badge-status ${status.class}`}>{status.text}</span>
+        <span className={`badge-status ${status.className}`}>{status.text}</span>
         <span className="card-role">{config.role}</span>
       </div>
     </div>
