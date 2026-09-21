@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { getTemperatures } from '../services/api';
+import { calculateDeltaAir } from '../utils/temperatureMetrics';
 
 /**
  * Custom Hook quản lý dữ liệu nhiệt độ, lịch sử và trạng thái kết nối với ESP32
@@ -15,7 +16,7 @@ export function useTemperatures(initialInterval = 1500) {
       const t1 = Number((38.5 + Math.sin(i * 0.5) * 1.2).toFixed(2));
       const t2 = Number((-12.2 + Math.cos(i * 0.4) * 1.5).toFixed(2));
       const t3 = Number((19.5 + Math.sin(i * 0.3) * 0.8).toFixed(2));
-      pts.push({ time: t, t1, t2, t3, deltaT: Number((t2 - t1).toFixed(2)) });
+      pts.push({ time: t, t1, t2, t3, deltaAir: calculateDeltaAir(t1, t2) });
     }
     return pts;
   })();
@@ -23,7 +24,7 @@ export function useTemperatures(initialInterval = 1500) {
   const [data, setData] = useState({
     status: 'demo',
     uptime: 125000,
-    deltaT: -50.7,
+    deltaAir: 5.0,
     sensors: [
       { id: 0, name: 'T1 Khi vao dan lanh', temp: 38.69, online: true },
       { id: 1, name: 'T2 Khi ra dan lanh', temp: -12.31, online: true },
@@ -72,12 +73,12 @@ export function useTemperatures(initialInterval = 1500) {
       manualTempsRef.current = { t1, t2, t3 };
     }
 
-    const deltaT = Number((t2 - t1).toFixed(2));
+    const deltaAir = calculateDeltaAir(t1, t2);
 
     const demoPayload = {
       status: 'demo',
       uptime: Date.now() % 10000000,
-      deltaT,
+      deltaAir,
       sensors: [
         { id: 0, name: 'T1 Khi vao dan lanh', temp: t1, online: true },
         { id: 1, name: 'T2 Khi ra dan lanh', temp: t2, online: true },
@@ -90,7 +91,7 @@ export function useTemperatures(initialInterval = 1500) {
     setLastUpdated(now);
     setHistory((prev) => [
       ...prev.slice(-29),
-      { time: timeStr, t1, t2, t3, deltaT }
+      { time: timeStr, t1, t2, t3, deltaAir }
     ]);
   }, [isAutoSim]);
 
@@ -122,7 +123,7 @@ export function useTemperatures(initialInterval = 1500) {
 
       setHistory((prev) => [
         ...prev.slice(-29),
-        { time: timeStr, t1, t2, t3, deltaT: res.deltaT }
+        { time: timeStr, t1, t2, t3, deltaAir: res.deltaAir }
       ]);
 
       res.sensors?.forEach((s) => {
