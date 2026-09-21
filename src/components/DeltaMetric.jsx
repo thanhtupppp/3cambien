@@ -1,32 +1,27 @@
 import React from 'react';
+import { evaluateDeltaAir } from '../utils/temperatureMetrics';
 
-export function DeltaMetric({ t1, t2, deltaT }) {
-  const isValid = t1 !== null && t2 !== null && deltaT !== undefined && deltaT !== null;
-  const delta = isValid ? Number(deltaT).toFixed(1) : '--.-';
+const STATUS_COLORS = {
+  optimal: 'var(--color-optimal)',
+  warning: 'var(--color-warning)',
+  danger: 'var(--color-danger)',
+  unavailable: 'var(--neu-ink-muted)'
+};
 
-  const getEvaluation = () => {
-    if (!isValid) return { text: 'Chưa đủ dữ liệu tính toán', color: 'var(--text-muted)' };
-    const val = Number(deltaT);
-    if (val >= 10 && val <= 65) {
-      return { text: 'Trao đổi nhiệt dàn lạnh hoạt động hiệu quả', color: 'var(--color-optimal)' };
-    } else if (val < 10) {
-      return { text: 'Chênh nhiệt thấp (Dàn lạnh có thể bị bám tuyết hoặc thiếu gas)', color: 'var(--color-warning)' };
-    } else {
-      return { text: 'Chênh nhiệt cao bất thường (Cần kiểm tra tải nhiệt)', color: 'var(--color-danger)' };
-    }
-  };
-
-  const evalResult = getEvaluation();
+export function DeltaMetric({ t1, t2, deltaAir }) {
+  const isValid = Number.isFinite(t1) && Number.isFinite(t2) && Number.isFinite(deltaAir);
+  const delta = isValid ? deltaAir.toFixed(1) : '--.-';
+  const evaluation = evaluateDeltaAir(isValid ? deltaAir : null);
 
   return (
     <div className="glass-panel delta-container">
       <div className="delta-left">
         <div className="delta-icon">⚡</div>
         <div>
-          <span className="delta-label">HIỆU SUẤT DÀN LẠNH • ĐỘ CHÊNH NHIỆT ĐỘ</span>
-          <h2 className="delta-formula">ΔT = T2 (Khí ra) - T1 (Khí vào)</h2>
-          <p className="delta-eval" style={{ color: evalResult.color }}>
-            {evalResult.text}
+          <span className="delta-label">HIỆU SUẤT DÀN LẠNH • ĐỘ GIẢM NHIỆT KHÔNG KHÍ</span>
+          <h2 className="delta-formula">ΔTair = T1 (Khí vào) - T2 (Khí ra)</h2>
+          <p className="delta-eval" style={{ color: STATUS_COLORS[evaluation.status] }}>
+            {evaluation.text}
           </p>
         </div>
       </div>
@@ -34,7 +29,7 @@ export function DeltaMetric({ t1, t2, deltaT }) {
       <div className="delta-right">
         <div className="delta-badge">
           <span className="delta-val">{delta}</span>
-          <span className="delta-unit">°C</span>
+          <span className="delta-unit">K</span>
         </div>
       </div>
     </div>
