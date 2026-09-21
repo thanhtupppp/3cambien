@@ -46,6 +46,8 @@ export function useTemperatures(initialInterval = 1500) {
   const manualTempsRef = useRef({ t1: 38.69, t2: -12.31, t3: 19.62 });
   const failCountRef = useRef(0);
   const isMountedRef = useRef(true);
+  const requestControllerRef = useRef(null);
+  const connectionStatusRef = useRef('demo');
 
   const addLog = useCallback((type, message) => {
     const time = new Date().toLocaleTimeString('vi-VN', { hour12: false });
@@ -101,19 +103,25 @@ export function useTemperatures(initialInterval = 1500) {
       return;
     }
 
+    if (requestControllerRef.current) return;
+
+    const controller = new AbortController();
+    requestControllerRef.current = controller;
+
     try {
-      const res = await getTemperatures();
+      const res = await getTemperatures(controller.signal);
 
       if (!isMountedRef.current) return;
 
       setData(res);
       setLastUpdated(new Date());
 
-      if (failCountRef.current > 0 || connectionStatus !== 'connected') {
+      if (failCountRef.current > 0 || connectionStatusRef.current !== 'connected') {
         addLog('success', 'Kết nối thành công với ESP32');
       }
 
       failCountRef.current = 0;
+      connectionStatusRef.current = 'connected';
       setConnectionStatus('connected');
 
       const timeStr = new Date().toLocaleTimeString('vi-VN', { hour12: false });
@@ -132,22 +140,26 @@ export function useTemperatures(initialInterval = 1500) {
         }
       });
 
-    } catch {
-      if (!isMountedRef.current) return;
+    } catch (error) {
+      if (!isMountedRef.current || error?.name === 'AbortError') return;
 
       failCountRef.current += 1;
 
       if (failCountRef.current >= 3) {
+        connectionStatusRef.current = 'offline';
         setConnectionStatus('offline');
       } else {
+        connectionStatusRef.current = 'reconnecting';
         setConnectionStatus('reconnecting');
       }
 
       if (failCountRef.current === 1) {
         addLog('error', `Chưa nhận được tín hiệu từ ESP32. Đang tự động kết nối lại...`);
       }
+    } finally {
+      if (requestControllerRef.current === controller) requestControllerRef.current = null;
     }
-  }, [isDemoMode, connectionStatus, addLog, generateDemoData]);
+  }, [isDemoMode, addLog, generateDemoData]);
 
   useEffect(() => {
     isMountedRef.current = true;
@@ -160,6 +172,8 @@ export function useTemperatures(initialInterval = 1500) {
     return () => {
       isMountedRef.current = false;
       clearInterval(timer);
+      requestControllerRef.current?.abort();
+      requestControllerRef.current = null;
     };
   }, [pollingInterval, fetchData]);
 
