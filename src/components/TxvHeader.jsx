@@ -1,4 +1,5 @@
 import React from 'react';
+import '../styles/TxvHeader.css';
 
 function TxvHeaderComponent({
   opMode,
