@@ -5,7 +5,7 @@ import net from 'net';
 let currentTemps = {
   status: 'offline',
   uptime: 0,
-  deltaT: null,
+  deltaAir: null,
   sensors: [
     { id: 0, name: 'T1 Khi vao dan lanh', temp: null, online: false },
     { id: 1, name: 'T2 Khi ra dan lanh', temp: null, online: false },
@@ -61,11 +61,11 @@ function createWokwiBridgePlugin() {
             currentTemps.status = 'online';
           }
 
-          // Tính deltaT nếu cả 2 cảm biến T1, T2 đều có giá trị
+          // Tính ΔTair = T1 khí vào - T2 khí ra khi cả hai cảm biến hợp lệ
           const s1 = currentTemps.sensors[0].temp;
           const s2 = currentTemps.sensors[1].temp;
           if (s1 !== null && s2 !== null) {
-            currentTemps.deltaT = parseFloat((s2 - s1).toFixed(2));
+            currentTemps.deltaAir = parseFloat((s1 - s2).toFixed(2));
           }
           currentTemps.uptime = Date.now() - startTime;
         }
