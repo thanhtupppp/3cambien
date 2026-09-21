@@ -39,6 +39,10 @@
   font-size: 0.82rem;
   color: var(--neu-ink-muted);
   font-weight: 600;
+  padding: 6px 12px;
+  border-radius: var(--neu-radius-full);
+  background: var(--neu-surface);
+  box-shadow: var(--neu-shadow-raised-xs);
 }
 
 .legend-dot {
