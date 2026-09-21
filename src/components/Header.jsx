@@ -12,7 +12,7 @@ export function Header({
   toggleTheme
 }) {
   const formatUptime = (ms) => {
-    if (!ms) return '--:--:--';
+    if (ms === null || ms === undefined || !Number.isFinite(Number(ms))) return '--:--:--';
     const totalSec = Math.floor(ms / 1000);
     const h = String(Math.floor(totalSec / 3600)).padStart(2, '0');
     const m = String(Math.floor((totalSec % 3600) / 60)).padStart(2, '0');
