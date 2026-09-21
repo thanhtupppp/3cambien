@@ -6,10 +6,10 @@ Status values: Not Started / In Progress / Blocked / In Review / Done
 
 | ID | Work item | Owner | Status | Start date | Completion date | Blocker | Evidence |
 |---|---|---|---|---|---|---|---|
-| C-01 | Sửa công thức ΔT thành T1 - T2 | thanhtupppp | In Progress | 2026-09-22 |  |  |  |
-| C-02 | Chuẩn hóa tên metric ΔTair | thanhtupppp | Not Started |  |  |  |  |
-| C-03 | Sửa ngưỡng đánh giá ΔT | thanhtupppp | Not Started |  |  |  |  |
-| C-04 | Viết test logic ΔT | thanhtupppp | Not Started |  |  |  |  |
+| C-01 | Sửa công thức ΔT thành T1 - T2 | thanhtupppp | Done | 2026-09-22 | 2026-09-22 |  | src/utils/temperatureMetrics.js; App/useTemperatures/vite bridge |
+| C-02 | Chuẩn hóa tên metric ΔTair | thanhtupppp | Done | 2026-09-22 | 2026-09-22 |  | ΔTair naming in data/UI |
+| C-03 | Sửa ngưỡng đánh giá ΔT | thanhtupppp | Done | 2026-09-22 | 2026-09-22 |  | evaluateDeltaAir() centralized ranges |
+| C-04 | Viết test logic ΔT | thanhtupppp | In Progress | 2026-09-22 |  |  |  |
 | H-01 | Chống polling overlap | thanhtupppp | Not Started |  |  |  |  |
 | H-02 | Hủy request khi component unmount | thanhtupppp | Not Started |  |  |  |  |
 | H-03 | Validate API payload | thanhtupppp | Not Started |  |  |  |  |
