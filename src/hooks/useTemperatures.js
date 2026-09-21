@@ -13,9 +13,9 @@ export function useTemperatures(initialInterval = 1500) {
     const now = Date.now();
     for (let i = 15; i >= 0; i--) {
       const t = new Date(now - i * 1500).toLocaleTimeString('vi-VN', { hour12: false });
-      const t1 = Number((38.5 + Math.sin(i * 0.5) * 1.2).toFixed(2));
-      const t2 = Number((-12.2 + Math.cos(i * 0.4) * 1.5).toFixed(2));
-      const t3 = Number((19.5 + Math.sin(i * 0.3) * 0.8).toFixed(2));
+      const t1 = Number((-23.0 + Math.sin(i * 0.5) * 0.6).toFixed(2));
+      const t2 = Number((-28.0 + Math.cos(i * 0.4) * 0.7).toFixed(2));
+      const t3 = Number((-20.0 + Math.sin(i * 0.3) * 0.5).toFixed(2));
       pts.push({ time: t, t1, t2, t3, deltaAir: calculateDeltaAir(t1, t2) });
     }
     return pts;
@@ -26,9 +26,9 @@ export function useTemperatures(initialInterval = 1500) {
     uptime: 125000,
     deltaAir: 5.0,
     sensors: [
-      { id: 0, name: 'T1 Khi vao dan lanh', temp: 38.69, online: true },
-      { id: 1, name: 'T2 Khi ra dan lanh', temp: -12.31, online: true },
-      { id: 2, name: 'T3 Ong gas hoi ve', temp: 19.62, online: true }
+      { id: 0, name: 'T1 Khi vao dan lanh', temp: -23.0, online: true },
+      { id: 1, name: 'T2 Khi ra dan lanh', temp: -28.0, online: true },
+      { id: 2, name: 'T3 Ong gas hoi ve', temp: -20.0, online: true }
     ]
   });
   const [history, setHistory] = useState(initialHistory);
@@ -43,7 +43,7 @@ export function useTemperatures(initialInterval = 1500) {
   const [isAutoSim, setIsAutoSim] = useState(true);
 
   // Giá trị thủ công khi chỉnh slider
-  const manualTempsRef = useRef({ t1: 38.69, t2: -12.31, t3: 19.62 });
+  const manualTempsRef = useRef({ t1: -23.0, t2: -28.0, t3: -20.0 });
   const failCountRef = useRef(0);
   const isMountedRef = useRef(true);
   const requestControllerRef = useRef(null);
