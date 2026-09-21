@@ -19,18 +19,18 @@ Status values: Not Started / In Progress / Blocked / In Review / Done
 | H-07 | Reset stale ΔT khi sensor offline | thanhtupppp | Done | 2026-09-22 | 2026-09-22 |  | deltaAir reset when T1/T2 stale |
 | H-08 | Sửa initial demo history | thanhtupppp | Done | 2026-09-22 | 2026-09-22 |  | cold-room demo baseline around -23°C |
 | H-09 | Test connection state transitions | thanhtupppp | In Progress | 2026-09-22 |  |  |  |
-| M-01 | Tạo status evaluator riêng cho T1/T2/T3 | thanhtupppp | Not Started |  |  |  |  |
-| M-02 | Tách semantics T3 khỏi nhiệt độ tuyệt đối | thanhtupppp | Not Started |  |  |  |  |
-| M-03 | Xử lý thresholdType dead code | thanhtupppp | Not Started |  |  |  |  |
-| M-04 | Ổn định polling effect dependencies | thanhtupppp | Not Started |  |  |  |  |
-| M-05 | Chuẩn hóa cách truyền isOnline | thanhtupppp | Not Started |  |  |  |  |
-| M-06 | Tách rõ connection mode enum | thanhtupppp | Not Started |  |  |  |  |
-| M-07 | Đưa API endpoint sang env config | thanhtupppp | Not Started |  |  |  |  |
+| M-01 | Tạo status evaluator riêng cho T1/T2/T3 | thanhtupppp | Done | 2026-09-22 | 2026-09-22 |  | src/utils/sensorStatus.js |
+| M-02 | Tách semantics T3 khỏi nhiệt độ tuyệt đối | thanhtupppp | Done | 2026-09-22 | 2026-09-22 |  | T3 status no longer based on absolute sub-zero temp |
+| M-03 | Xử lý thresholdType dead code | thanhtupppp | Done | 2026-09-22 | 2026-09-22 |  | removed unused thresholdType |
+| M-04 | Ổn định polling effect dependencies | thanhtupppp | Done | 2026-09-22 | 2026-09-22 |  | connectionStatus removed from fetchData dependency |
+| M-05 | Chuẩn hóa cách truyền isOnline | thanhtupppp | Done | 2026-09-22 | 2026-09-22 |  | App passes online only for connected/demo |
+| M-06 | Tách rõ connection mode enum | thanhtupppp | In Progress | 2026-09-22 |  |  |  |
+| M-07 | Đưa API endpoint sang env config | thanhtupppp | Done | 2026-09-22 | 2026-09-22 |  | VITE_TEMPERATURE_API_URL fallback endpoint |
 | M-08 | Tách Wokwi bridge khỏi vite.config.js | thanhtupppp | Not Started |  |  |  |  |
 | M-09 | Chuẩn hóa error handling | thanhtupppp | Not Started |  |  |  |  |
-| M-10 | Test sensor semantics | thanhtupppp | Not Started |  |  |  |  |
-| L-01 | Persist theme | thanhtupppp | Not Started |  |  |  |  |
-| L-02 | Sửa uptime = 0 | thanhtupppp | Not Started |  |  |  |  |
+| M-10 | Test sensor semantics | thanhtupppp | Done | 2026-09-22 | 2026-09-22 |  | test/sensorStatus.test.js |
+| L-01 | Persist theme | thanhtupppp | Done | 2026-09-22 | 2026-09-22 |  | localStorage + prefers-color-scheme |
+| L-02 | Sửa uptime = 0 | thanhtupppp | Done | 2026-09-22 | 2026-09-22 |  | Header zero uptime guard |
 | L-03 | Thêm ESLint | thanhtupppp | Not Started |  |  |  |  |
 | L-04 | Thêm unit test framework | thanhtupppp | Not Started |  |  |  |  |
 | L-05 | Thêm responsive E2E tests | thanhtupppp | Not Started |  |  |  |  |
