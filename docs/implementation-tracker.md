@@ -10,15 +10,15 @@ Status values: Not Started / In Progress / Blocked / In Review / Done
 | C-02 | Chuẩn hóa tên metric ΔTair | thanhtupppp | Done | 2026-09-22 | 2026-09-22 |  | ΔTair naming in data/UI |
 | C-03 | Sửa ngưỡng đánh giá ΔT | thanhtupppp | Done | 2026-09-22 | 2026-09-22 |  | evaluateDeltaAir() centralized ranges |
 | C-04 | Viết test logic ΔT | thanhtupppp | Done | 2026-09-22 | 2026-09-22 |  | test/temperatureMetrics.test.js |
-| H-01 | Chống polling overlap | thanhtupppp | In Progress | 2026-09-22 |  |  |  |
-| H-02 | Hủy request khi component unmount | thanhtupppp | Not Started |  |  |  |  |
-| H-03 | Validate API payload | thanhtupppp | Not Started |  |  |  |  |
-| H-04 | Sửa điều kiện undefined !== null | thanhtupppp | Not Started |  |  |  |  |
-| H-05 | Thêm sensor TTL / lastSeen | thanhtupppp | Not Started |  |  |  |  |
-| H-06 | Sửa semantics trạng thái system online | thanhtupppp | Not Started |  |  |  |  |
-| H-07 | Reset stale ΔT khi sensor offline | thanhtupppp | Not Started |  |  |  |  |
-| H-08 | Sửa initial demo history | thanhtupppp | Not Started |  |  |  |  |
-| H-09 | Test connection state transitions | thanhtupppp | Not Started |  |  |  |  |
+| H-01 | Chống polling overlap | thanhtupppp | Done | 2026-09-22 | 2026-09-22 |  | useTemperatures requestControllerRef |
+| H-02 | Hủy request khi component unmount | thanhtupppp | Done | 2026-09-22 | 2026-09-22 |  | AbortController cleanup in useTemperatures |
+| H-03 | Validate API payload | thanhtupppp | Done | 2026-09-22 | 2026-09-22 |  | validateTemperaturePayload() + test/apiValidation.test.js |
+| H-04 | Sửa điều kiện undefined !== null | thanhtupppp | Done | 2026-09-22 | 2026-09-22 |  | Number.isFinite sensor validation |
+| H-05 | Thêm sensor TTL / lastSeen | thanhtupppp | Done | 2026-09-22 | 2026-09-22 |  | SENSOR_TTL_MS + sensorLastSeen |
+| H-06 | Sửa semantics trạng thái system online | thanhtupppp | Done | 2026-09-22 | 2026-09-22 |  | bridge connecting until valid telemetry |
+| H-07 | Reset stale ΔT khi sensor offline | thanhtupppp | Done | 2026-09-22 | 2026-09-22 |  | deltaAir reset when T1/T2 stale |
+| H-08 | Sửa initial demo history | thanhtupppp | Done | 2026-09-22 | 2026-09-22 |  | cold-room demo baseline around -23°C |
+| H-09 | Test connection state transitions | thanhtupppp | In Progress | 2026-09-22 |  |  |  |
 | M-01 | Tạo status evaluator riêng cho T1/T2/T3 | thanhtupppp | Not Started |  |  |  |  |
 | M-02 | Tách semantics T3 khỏi nhiệt độ tuyệt đối | thanhtupppp | Not Started |  |  |  |  |
 | M-03 | Xử lý thresholdType dead code | thanhtupppp | Not Started |  |  |  |  |
