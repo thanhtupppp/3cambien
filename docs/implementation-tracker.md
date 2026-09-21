@@ -18,7 +18,7 @@ Status values: Not Started / In Progress / Blocked / In Review / Done
 | H-06 | Sửa semantics trạng thái system online | thanhtupppp | Done | 2026-09-22 | 2026-09-22 |  | bridge connecting until valid telemetry |
 | H-07 | Reset stale ΔT khi sensor offline | thanhtupppp | Done | 2026-09-22 | 2026-09-22 |  | deltaAir reset when T1/T2 stale |
 | H-08 | Sửa initial demo history | thanhtupppp | Done | 2026-09-22 | 2026-09-22 |  | cold-room demo baseline around -23°C |
-| H-09 | Test connection state transitions | thanhtupppp | In Progress | 2026-09-22 |  |  |  |
+| H-09 | Test connection state transitions | thanhtupppp | Done | 2026-09-22 | 2026-09-22 |  | test/connectionTransitions.test.js + src/utils/connectionTransitions.js |
 | M-01 | Tạo status evaluator riêng cho T1/T2/T3 | thanhtupppp | Done | 2026-09-22 | 2026-09-22 |  | src/utils/sensorStatus.js |
 | M-02 | Tách semantics T3 khỏi nhiệt độ tuyệt đối | thanhtupppp | Done | 2026-09-22 | 2026-09-22 |  | T3 status no longer based on absolute sub-zero temp |
 | M-03 | Xử lý thresholdType dead code | thanhtupppp | Done | 2026-09-22 | 2026-09-22 |  | removed unused thresholdType |

@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { getTemperatures } from '../services/api';
 import { calculateDeltaAir } from '../utils/temperatureMetrics';
+import { statusAfterFailure, statusAfterSuccess } from '../utils/connectionTransitions';
 
 /**
  * Custom Hook quản lý dữ liệu nhiệt độ, lịch sử và trạng thái kết nối với ESP32
@@ -121,8 +122,9 @@ export function useTemperatures(initialInterval = 1500) {
       }
 
       failCountRef.current = 0;
-      connectionStatusRef.current = 'connected';
-      setConnectionStatus('connected');
+      const nextStatus = statusAfterSuccess();
+      connectionStatusRef.current = nextStatus;
+      setConnectionStatus(nextStatus);
 
       const timeStr = new Date().toLocaleTimeString('vi-VN', { hour12: false });
       const t1 = res.sensors?.[0]?.online ? res.sensors[0].temp : null;
@@ -145,13 +147,9 @@ export function useTemperatures(initialInterval = 1500) {
 
       failCountRef.current += 1;
 
-      if (failCountRef.current >= 3) {
-        connectionStatusRef.current = 'offline';
-        setConnectionStatus('offline');
-      } else {
-        connectionStatusRef.current = 'reconnecting';
-        setConnectionStatus('reconnecting');
-      }
+      const nextStatus = statusAfterFailure(failCountRef.current);
+      connectionStatusRef.current = nextStatus;
+      setConnectionStatus(nextStatus);
 
       if (failCountRef.current === 1) {
         addLog('error', `Chưa nhận được tín hiệu từ ESP32. Đang tự động kết nối lại...`);
