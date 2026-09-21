@@ -1,44 +1,50 @@
+const REQUEST_TIMEOUT_MS = 3000;
+const FALLBACK_API_URL = import.meta.env.VITE_TEMPERATURE_API_URL || 'http://localhost:8180/api/temperatures';
+
+function isValidSensor(sensor) {
+  if (!sensor || typeof sensor !== 'object' || typeof sensor.online !== 'boolean') return false;
+  if (!sensor.online) return sensor.temp === null || sensor.temp === undefined || Number.isFinite(sensor.temp);
+  return Number.isFinite(sensor.temp);
+}
+
+export function validateTemperaturePayload(data) {
+  if (!data || typeof data !== 'object' || !Array.isArray(data.sensors) || data.sensors.length < 3) {
+    return false;
+  }
+  return data.sensors.slice(0, 3).every(isValidSensor);
+}
+
+async function fetchTemperatureEndpoint(url, signal) {
+  const response = await fetch(url, {
+    signal,
+    headers: { Accept: 'application/json' }
+  });
+  if (!response.ok) throw new Error(`Temperature API HTTP ${response.status}`);
+  const data = await response.json();
+  if (!validateTemperaturePayload(data)) throw new Error('Invalid temperature payload');
+  return data;
+}
+
 /**
- * Lấy dữ liệu nhiệt độ từ ESP32
- * Hỗ trợ tự động cả 2 đường:
- * 1. Qua Vite Wokwi Serial Bridge (/api/temperatures) - Hoạt động miễn phí 100% qua port 4000
- * 2. Qua Wokwi HTTP Forwarding (http://localhost:8180/api/temperatures)
- * @param {AbortSignal} [signal]
+ * Fetch validated ESP32 telemetry. A caller-provided AbortSignal is respected;
+ * otherwise this function enforces a short timeout.
  */
 export async function getTemperatures(signal) {
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 3000);
+  const timeoutController = new AbortController();
+  const timeoutId = setTimeout(() => timeoutController.abort(), REQUEST_TIMEOUT_MS);
+  const effectiveSignal = signal || timeoutController.signal;
 
   try {
-    // 1. Thử qua Vite Bridge trước (/api/temperatures)
     try {
-      const res = await fetch('/api/temperatures', {
-        signal: signal || controller.signal,
-        headers: { 'Accept': 'application/json' }
-      });
-      if (res.ok) {
-        const data = await res.json();
-        // Nếu có dữ liệu online từ Serial Bridge, trả về luôn
-        if (data.status === 'online' || data.sensors?.[0]?.temp !== null) {
-          return data;
-        }
+      const bridgeData = await fetchTemperatureEndpoint('/api/temperatures', effectiveSignal);
+      if (bridgeData.status === 'online' || bridgeData.sensors.some((sensor) => sensor.online)) {
+        return bridgeData;
       }
-    } catch {
-      // Tiếp tục thử cổng 8180
+    } catch (error) {
+      if (effectiveSignal.aborted) throw error;
     }
 
-    // 2. Thử qua HTTP Port Forwarding (8180)
-    const response = await fetch('http://localhost:8180/api/temperatures', {
-      signal: signal || controller.signal,
-      headers: { 'Accept': 'application/json' }
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const data = await response.json();
-    return data;
+    return await fetchTemperatureEndpoint(FALLBACK_API_URL, effectiveSignal);
   } finally {
     clearTimeout(timeoutId);
   }
