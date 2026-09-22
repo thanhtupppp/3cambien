@@ -1,11 +1,11 @@
 import { CONNECTION_STATUS } from '../constants/connectionStatus.js';
+import { MONITORING_CONFIG } from '../constants/monitoringConfig.js';
 import {
   TELEMETRY_ERROR_CODE,
   TelemetryError,
   normalizeTelemetryError
 } from '../utils/telemetryError.js';
 
-const REQUEST_TIMEOUT_MS = 3000;
 const FALLBACK_API_URL = import.meta.env?.VITE_TEMPERATURE_API_URL || 'http://localhost:8180/api/temperatures';
 
 function isValidSensor(sensor) {

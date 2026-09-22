@@ -44,7 +44,7 @@ export default function App() {
     manualTemps,
     setManualTemp,
     refetch
-  } = useTemperatures(1500);
+  } = useTemperatures();
 
   const sensors = data?.sensors || [
     { id: 0, name: 'T1 Khi vao dan lanh', temp: null, online: false },

@@ -5,41 +5,42 @@ import {
   pressureToTemp,
   tempToPressure
 } from '../data/danfossData';
+import { TXV_CONFIG } from '../constants/txvConfig';
 
 /**
  * Custom Hook quản lý toàn bộ logic tính toán nhiệt động lực học và quá nhiệt van Danfoss TXV
  */
 export function useTxvCalculator(liveT1, liveT2, liveT3, isOnline) {
   // Trạng thái cấu hình
-  const [selectedRefId, setSelectedRefId] = useState('R404A');
-  const [selectedValveId, setSelectedValveId] = useState('T2_TE2');
-  const [opMode, setOpMode] = useState('live'); // 'target_room' | 'live' | 'manual'
+  const [selectedRefId, setSelectedRefId] = useState(TXV_CONFIG.defaultRefrigerant);
+  const [selectedValveId, setSelectedValveId] = useState(TXV_CONFIG.defaultValve);
+  const [opMode, setOpMode] = useState(TXV_CONFIG.defaultOpMode); // 'target_room' | 'live' | 'manual'
   const [isAutoSyncSensors, setIsAutoSyncSensors] = useState(true);
-  const [evapSource, setEvapSource] = useState('t2'); // 't2' | 't1_td' | 'pressure'
+  const [evapSource, setEvapSource] = useState(TXV_CONFIG.defaultEvapSource); // 't2' | 't1_td' | 'pressure'
 
   // Thông số mục tiêu
-  const [targetRoomTemp, setTargetRoomTemp] = useState(-20.0); // Mặc định kho đông -20°C
-  const [tdValue, setTdValue] = useState(7.0); // Chênh nhiệt dàn lạnh TD (K)
-  const [targetSh, setTargetSh] = useState(6.0); // Superheat mục tiêu (K)
+  const [targetRoomTemp, setTargetRoomTemp] = useState(TXV_CONFIG.defaultRoomTempC); // Mặc định kho đông -20°C
+  const [tdValue, setTdValue] = useState(TXV_CONFIG.defaultTdK); // Chênh nhiệt dàn lạnh TD (K)
+  const [targetSh, setTargetSh] = useState(TXV_CONFIG.defaultTargetShK); // Superheat mục tiêu (K)
 
   // Thông số đo đạc & tính toán
-  const [evapTemp, setEvapTemp] = useState(-27.0); // T_bay_hoi (°C)
-  const [evapPressure, setEvapPressure] = useState(2.22); // P_bay_hoi (bar)
-  const [suctionTemp, setSuctionTemp] = useState(-21.0); // T_hoi_hut (°C)
+  const [evapTemp, setEvapTemp] = useState(TXV_CONFIG.defaultEvapTempC); // T_bay_hoi (°C)
+  const [evapPressure, setEvapPressure] = useState(TXV_CONFIG.defaultEvapPressureBar); // P_bay_hoi (bar)
+  const [suctionTemp, setSuctionTemp] = useState(TXV_CONFIG.defaultSuctionTempC); // T_hoi_hut (°C)
 
   // Giới hạn giá trị nhiệt độ an toàn (-100°C đến 100°C)
   const clampTemp = useCallback((temp, defaultVal = 0) => {
     if (temp === null || temp === undefined || isNaN(temp)) return defaultVal;
     const num = Number(temp);
     if (!isFinite(num)) return defaultVal;
-    return Math.max(-100, Math.min(100, num));
+    return Math.max(TXV_CONFIG.temperatureMinC, Math.min(TXV_CONFIG.temperatureMaxC, num));
   }, []);
 
   // Xử lý chuyển đổi nguồn tính T_evap
   const handleSetEvapSource = useCallback((source) => {
     setEvapSource(source);
     if (source === 't2') {
-      const t2 = clampTemp(liveT2, -27.0);
+      const t2 = clampTemp(liveT2, TXV_CONFIG.defaultEvapTempC);
       const calculatedEvapT = Number(t2.toFixed(1));
       setEvapTemp(calculatedEvapT);
       try {
@@ -48,7 +49,7 @@ export function useTxvCalculator(liveT1, liveT2, liveT3, isOnline) {
         // ignore
       }
     } else if (source === 't1_td') {
-      const t1 = clampTemp(liveT1, -20.0);
+      const t1 = clampTemp(liveT1, TXV_CONFIG.defaultRoomTempC);
       const calculatedEvapT = Number((t1 - tdValue).toFixed(1));
       setEvapTemp(calculatedEvapT);
       try {
@@ -69,7 +70,7 @@ export function useTxvCalculator(liveT1, liveT2, liveT3, isOnline) {
   // Cài đặt theo nhiệt độ kho mong muốn
   const applyRoomTempTarget = useCallback((roomT, td = tdValue) => {
     const rT = parseFloat(roomT) || 0;
-    const clampedRoomT = Math.max(-100, Math.min(100, rT));
+    const clampedRoomT = Math.max(TXV_CONFIG.temperatureMinC, Math.min(TXV_CONFIG.temperatureMaxC, rT));
     const calculatedEvapT = Number((clampedRoomT - td).toFixed(1));
 
     setTargetRoomTemp(clampedRoomT);
@@ -96,9 +97,9 @@ export function useTxvCalculator(liveT1, liveT2, liveT3, isOnline) {
   // Tự động đồng bộ với cảm biến thời gian thực
   useEffect(() => {
     if (opMode === 'live') {
-      const t1 = clampTemp(liveT1, -18.0);
+      const t1 = clampTemp(liveT1, TXV_CONFIG.liveFallbackT1C);
       const t2 = clampTemp(liveT2, t1 - tdValue);
-      const t3 = clampTemp(liveT3, -12.0);
+      const t3 = clampTemp(liveT3, TXV_CONFIG.liveFallbackT3C);
 
       let calculatedEvapT;
       if (evapSource === 't2') {
@@ -159,7 +160,7 @@ export function useTxvCalculator(liveT1, liveT2, liveT3, isOnline) {
   // Xử lý thay đổi nhiệt độ bay hơi bằng tay
   const handleEvapTempChange = useCallback((val) => {
     const num = parseFloat(val) || 0;
-    const clampedTemp = Math.max(-100, Math.min(100, num));
+    const clampedTemp = Math.max(TXV_CONFIG.temperatureMinC, Math.min(TXV_CONFIG.temperatureMaxC, num));
     setEvapTemp(clampedTemp);
 
     try {
@@ -172,7 +173,7 @@ export function useTxvCalculator(liveT1, liveT2, liveT3, isOnline) {
   // Xử lý thay đổi áp suất bay hơi bằng tay
   const handleEvapPressureChange = useCallback((val) => {
     const num = parseFloat(val) || 0;
-    const clampedPressure = Math.max(0.01, Math.min(200, num));
+    const clampedPressure = Math.max(TXV_CONFIG.pressureMinBar, Math.min(TXV_CONFIG.pressureMaxBar, num));
     setEvapPressure(clampedPressure);
 
     try {

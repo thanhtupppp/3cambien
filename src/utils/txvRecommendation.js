@@ -1,3 +1,5 @@
+import { TXV_CONFIG } from '../constants/txvConfig.js';
+
 /**
  * Utility tính toán hướng dẫn và số vòng vặn vít van tiết lưu Danfoss TXV
  * @param {number} actualSh Độ quá nhiệt thực tế đo được (K)
@@ -21,7 +23,7 @@ export function calculateTxvRecommendation(actualSh, targetSh, valve) {
   const diff = actualSh - targetSh;
 
   // Dải sai số cho phép ±0.4K (Đạt chuẩn tối ưu Danfoss)
-  if (Math.abs(diff) <= 0.4) {
+  if (Math.abs(diff) <= TXV_CONFIG.adjustmentToleranceK) {
     return {
       direction: 'NONE',
       turns: 0,
@@ -34,8 +36,8 @@ export function calculateTxvRecommendation(actualSh, targetSh, valve) {
 
   const calculateTurns = (difference) => {
     const rawTurns = Math.abs(difference) / sensitivity;
-    const turns = Math.min(Number(rawTurns.toFixed(2)), valve.maxTurns || 8);
-    return (Math.round(turns * 4) / 4).toFixed(2);
+    const turns = Math.min(Number(rawTurns.toFixed(2)), valve.maxTurns || TXV_CONFIG.defaultMaxTurns);
+    return (Math.round(turns / TXV_CONFIG.turnIncrement) * TXV_CONFIG.turnIncrement).toFixed(2);
   };
 
   if (diff < 0) {
