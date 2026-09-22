@@ -36,7 +36,7 @@ Status values: Not Started / In Progress / Blocked / In Review / Done / Skipped
 | L-05 | Thêm responsive E2E tests | thanhtupppp | In Review | 2026-09-22 |  | Chờ CI chạy Playwright | e2e/txv-responsive.spec.js + playwright.config.js + mobile CSS hardening |
 | L-06 | Thêm CI cho build/lint/test | thanhtupppp | In Review | 2026-09-22 |  | Chờ GitHub Actions xác nhận | .github/workflows/ci.yml: build + lint + unit + responsive E2E |
 | L-07 | Gom magic numbers thành constants | thanhtupppp | Done | 2026-09-22 | 2026-09-22 |  | src/constants/monitoringConfig.js + src/constants/txvConfig.js; shared polling/history/timeout/TXV defaults |
-| L-08 | Viết documentation cho sensor/data model | thanhtupppp | Not Started |  |  |  |  |
+| L-08 | Viết documentation cho sensor/data model | thanhtupppp | Done | 2026-09-22 | 2026-09-22 |  | docs/sensor-data-model.md: T1/T2/T3, ΔTair, superheat, payload, freshness, connection semantics |
 
 ## Definition of Done
 - T1=-23°C, T2=-28°C => ΔTair=+5K xuyên suốt hệ thống.
