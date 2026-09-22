@@ -78,7 +78,7 @@ export async function getTemperatures(signal) {
   if (signal?.aborted) abortFromCaller();
   else signal?.addEventListener('abort', abortFromCaller, { once: true });
 
-  const timeoutId = setTimeout(() => requestController.abort('timeout'), REQUEST_TIMEOUT_MS);
+  const timeoutId = setTimeout(() => requestController.abort('timeout'), MONITORING_CONFIG.requestTimeoutMs);
 
   try {
     try {
