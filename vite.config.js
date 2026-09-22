@@ -122,10 +122,12 @@ function createWokwiBridgePlugin() {
   };
 }
 
-export default defineConfig({
-  plugins: [react(), createWokwiBridgePlugin()],
+export default defineConfig(({ command }) => ({
+  // Keep the legacy serial bridge out of production/CI builds. It remains
+  // available only while running the Vite development server.
+  plugins: [react(), ...(command === 'serve' ? [createWokwiBridgePlugin()] : [])],
   server: {
     port: 5173,
     host: true
   }
-});
+}));
