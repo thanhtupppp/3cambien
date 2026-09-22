@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "node --test"
+    "test": "node --test",
+    "lint": "npx --yes eslint@9.39.1 . --max-warnings=0"
   },
   "dependencies": {
     "react": "^18.3.1",

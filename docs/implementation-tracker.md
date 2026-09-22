@@ -31,8 +31,8 @@ Status values: Not Started / In Progress / Blocked / In Review / Done / Skipped
 | M-10 | Test sensor semantics | thanhtupppp | Done | 2026-09-22 | 2026-09-22 |  | test/sensorStatus.test.js |
 | L-01 | Persist theme | thanhtupppp | Done | 2026-09-22 | 2026-09-22 |  | localStorage + prefers-color-scheme |
 | L-02 | Sửa uptime = 0 | thanhtupppp | Done | 2026-09-22 | 2026-09-22 |  | Header zero uptime guard |
-| L-03 | Thêm ESLint | thanhtupppp | Not Started |  |  |  |  |
-| L-04 | Thêm unit test framework | thanhtupppp | Not Started |  |  |  |  |
+| L-03 | Thêm ESLint | thanhtupppp | Done | 2026-09-22 | 2026-09-22 |  | eslint.config.js + npm run lint |
+| L-04 | Thêm unit test framework | thanhtupppp | Done | 2026-09-22 | 2026-09-22 |  | Node.js node:test + npm test + 5 test suites |
 | L-05 | Thêm responsive E2E tests | thanhtupppp | Not Started |  |  |  |  |
 | L-06 | Thêm CI cho build/lint/test | thanhtupppp | Not Started |  |  |  |  |
 | L-07 | Gom magic numbers thành constants | thanhtupppp | Not Started |  |  |  |  |
