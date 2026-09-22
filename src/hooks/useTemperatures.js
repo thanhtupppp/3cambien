@@ -3,6 +3,11 @@ import { getTemperatures } from '../services/api';
 import { calculateDeltaAir } from '../utils/temperatureMetrics';
 import { statusAfterFailure, statusAfterSuccess } from '../utils/connectionTransitions';
 import { CONNECTION_STATUS } from '../constants/connectionStatus';
+import {
+  TELEMETRY_ERROR_CODE,
+  normalizeTelemetryError,
+  telemetryErrorMessage
+} from '../utils/telemetryError';
 
 /**
  * Custom Hook quản lý dữ liệu nhiệt độ, lịch sử và trạng thái kết nối với ESP32
@@ -34,7 +39,7 @@ export function useTemperatures(initialInterval = 1500) {
     ]
   });
   const [history, setHistory] = useState(initialHistory);
-  const [connectionStatus, setConnectionStatus] = useState(CONNECTION_STATUS.DEMO)
+  const [connectionStatus, setConnectionStatus] = useState(CONNECTION_STATUS.DEMO);
   const [pollingInterval, setPollingInterval] = useState(initialInterval);
   const [logs, setLogs] = useState([
     { id: 1, time: new Date().toLocaleTimeString('vi-VN', { hour12: false }), type: 'info', message: 'Khởi chạy giao diện Neumorphism (Soft UI)' },
@@ -50,6 +55,7 @@ export function useTemperatures(initialInterval = 1500) {
   const isMountedRef = useRef(true);
   const requestControllerRef = useRef(null);
   const connectionStatusRef = useRef(CONNECTION_STATUS.DEMO);
+  const lastErrorCodeRef = useRef(null);
 
   const addLog = useCallback((type, message) => {
     const time = new Date().toLocaleTimeString('vi-VN', { hour12: false });
@@ -123,6 +129,7 @@ export function useTemperatures(initialInterval = 1500) {
       }
 
       failCountRef.current = 0;
+      lastErrorCodeRef.current = null;
       const nextStatus = statusAfterSuccess();
       connectionStatusRef.current = nextStatus;
       setConnectionStatus(nextStatus);
@@ -144,7 +151,9 @@ export function useTemperatures(initialInterval = 1500) {
       });
 
     } catch (error) {
-      if (!isMountedRef.current || error?.name === 'AbortError') return;
+      const normalizedError = normalizeTelemetryError(error);
+
+      if (!isMountedRef.current || normalizedError.code === TELEMETRY_ERROR_CODE.ABORTED) return;
 
       failCountRef.current += 1;
 
@@ -152,9 +161,11 @@ export function useTemperatures(initialInterval = 1500) {
       connectionStatusRef.current = nextStatus;
       setConnectionStatus(nextStatus);
 
-      if (failCountRef.current === 1) {
-        addLog('error', `Chưa nhận được tín hiệu từ ESP32. Đang tự động kết nối lại...`);
+      if (failCountRef.current === 1 || lastErrorCodeRef.current !== normalizedError.code) {
+        addLog('error', telemetryErrorMessage(normalizedError));
       }
+
+      lastErrorCodeRef.current = normalizedError.code;
     } finally {
       if (requestControllerRef.current === controller) requestControllerRef.current = null;
     }

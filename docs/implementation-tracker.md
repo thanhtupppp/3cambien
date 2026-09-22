@@ -2,7 +2,7 @@
 
 Updated: 2026-09-22
 
-Status values: Not Started / In Progress / Blocked / In Review / Done
+Status values: Not Started / In Progress / Blocked / In Review / Done / Skipped
 
 | ID | Work item | Owner | Status | Start date | Completion date | Blocker | Evidence |
 |---|---|---|---|---|---|---|---|
@@ -26,8 +26,8 @@ Status values: Not Started / In Progress / Blocked / In Review / Done
 | M-05 | Chuẩn hóa cách truyền isOnline | thanhtupppp | Done | 2026-09-22 | 2026-09-22 |  | App passes online only for connected/demo |
 | M-06 | Tách rõ connection mode enum | thanhtupppp | Done | 2026-09-22 | 2026-09-22 |  | src/constants/connectionStatus.js + shared enum usage across hook/App/Header/API/bridge |
 | M-07 | Đưa API endpoint sang env config | thanhtupppp | Done | 2026-09-22 | 2026-09-22 |  | VITE_TEMPERATURE_API_URL fallback endpoint |
-| M-08 | Tách Wokwi bridge khỏi vite.config.js | thanhtupppp | Not Started |  |  |  |  |
-| M-09 | Chuẩn hóa error handling | thanhtupppp | Not Started |  |  |  |  |
+| M-08 | Tách Wokwi bridge khỏi vite.config.js | thanhtupppp | Skipped |  | 2026-09-22 | Bỏ Wokwi khỏi scope theo quyết định hiện tại | Không triển khai |
+| M-09 | Chuẩn hóa error handling | thanhtupppp | Done | 2026-09-22 | 2026-09-22 |  | src/utils/telemetryError.js + API/hook normalization + test/telemetryError.test.js |
 | M-10 | Test sensor semantics | thanhtupppp | Done | 2026-09-22 | 2026-09-22 |  | test/sensorStatus.test.js |
 | L-01 | Persist theme | thanhtupppp | Done | 2026-09-22 | 2026-09-22 |  | localStorage + prefers-color-scheme |
 | L-02 | Sửa uptime = 0 | thanhtupppp | Done | 2026-09-22 | 2026-09-22 |  | Header zero uptime guard |
