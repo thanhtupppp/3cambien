@@ -1,37 +1,46 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { getTemperatures } from '../services/api';
+import { calculateDeltaAir } from '../utils/temperatureMetrics';
+import { statusAfterFailure, statusAfterSuccess } from '../utils/connectionTransitions';
+import { CONNECTION_STATUS } from '../constants/connectionStatus';
+import { DEMO_TEMPERATURES, MONITORING_CONFIG } from '../constants/monitoringConfig';
+import {
+  TELEMETRY_ERROR_CODE,
+  normalizeTelemetryError,
+  telemetryErrorMessage
+} from '../utils/telemetryError';
 
 /**
  * Custom Hook quản lý dữ liệu nhiệt độ, lịch sử và trạng thái kết nối với ESP32
  * @param {number} [initialInterval=1500] Chu kỳ polling (ms)
  */
-export function useTemperatures(initialInterval = 1500) {
+export function useTemperatures(initialInterval = MONITORING_CONFIG.defaultPollingMs) {
   // Tạo trước dữ liệu lịch sử mẫu để đồ thị hiển thị ngay khi mở trang
   const initialHistory = (() => {
     const pts = [];
     const now = Date.now();
     for (let i = 15; i >= 0; i--) {
-      const t = new Date(now - i * 1500).toLocaleTimeString('vi-VN', { hour12: false });
-      const t1 = Number((38.5 + Math.sin(i * 0.5) * 1.2).toFixed(2));
-      const t2 = Number((-12.2 + Math.cos(i * 0.4) * 1.5).toFixed(2));
-      const t3 = Number((19.5 + Math.sin(i * 0.3) * 0.8).toFixed(2));
-      pts.push({ time: t, t1, t2, t3, deltaT: Number((t2 - t1).toFixed(2)) });
+      const t = new Date(now - i * MONITORING_CONFIG.historySampleMs).toLocaleTimeString('vi-VN', { hour12: false });
+      const t1 = Number((DEMO_TEMPERATURES.t1 + Math.sin(i * 0.5) * 0.6).toFixed(2));
+      const t2 = Number((DEMO_TEMPERATURES.t2 + Math.cos(i * 0.4) * 0.7).toFixed(2));
+      const t3 = Number((DEMO_TEMPERATURES.t3 + Math.sin(i * 0.3) * 0.5).toFixed(2));
+      pts.push({ time: t, t1, t2, t3, deltaAir: calculateDeltaAir(t1, t2) });
     }
     return pts;
   })();
 
   const [data, setData] = useState({
-    status: 'demo',
+    status: CONNECTION_STATUS.DEMO,
     uptime: 125000,
-    deltaT: -50.7,
+    deltaAir: calculateDeltaAir(DEMO_TEMPERATURES.t1, DEMO_TEMPERATURES.t2),
     sensors: [
-      { id: 0, name: 'T1 Khi vao dan lanh', temp: 38.69, online: true },
-      { id: 1, name: 'T2 Khi ra dan lanh', temp: -12.31, online: true },
-      { id: 2, name: 'T3 Ong gas hoi ve', temp: 19.62, online: true }
+      { id: 0, name: 'T1 Khi vao dan lanh', temp: DEMO_TEMPERATURES.t1, online: true },
+      { id: 1, name: 'T2 Khi ra dan lanh', temp: DEMO_TEMPERATURES.t2, online: true },
+      { id: 2, name: 'T3 Ong gas hoi ve', temp: DEMO_TEMPERATURES.t3, online: true }
     ]
   });
   const [history, setHistory] = useState(initialHistory);
-  const [connectionStatus, setConnectionStatus] = useState('demo'); // 'connecting' | 'connected' | 'reconnecting' | 'offline' | 'demo'
+  const [connectionStatus, setConnectionStatus] = useState(CONNECTION_STATUS.DEMO);
   const [pollingInterval, setPollingInterval] = useState(initialInterval);
   const [logs, setLogs] = useState([
     { id: 1, time: new Date().toLocaleTimeString('vi-VN', { hour12: false }), type: 'info', message: 'Khởi chạy giao diện Neumorphism (Soft UI)' },
@@ -42,15 +51,18 @@ export function useTemperatures(initialInterval = 1500) {
   const [isAutoSim, setIsAutoSim] = useState(true);
 
   // Giá trị thủ công khi chỉnh slider
-  const manualTempsRef = useRef({ t1: 38.69, t2: -12.31, t3: 19.62 });
+  const manualTempsRef = useRef({ ...DEMO_TEMPERATURES });
   const failCountRef = useRef(0);
   const isMountedRef = useRef(true);
+  const requestControllerRef = useRef(null);
+  const connectionStatusRef = useRef(CONNECTION_STATUS.DEMO);
+  const lastErrorCodeRef = useRef(null);
 
   const addLog = useCallback((type, message) => {
     const time = new Date().toLocaleTimeString('vi-VN', { hour12: false });
     setLogs((prev) => [
       { id: Date.now() + Math.random(), time, type, message },
-      ...prev.slice(0, 24)
+      ...prev.slice(0, MONITORING_CONFIG.logMaxItems - 1)
     ]);
   }, []);
 
@@ -72,12 +84,12 @@ export function useTemperatures(initialInterval = 1500) {
       manualTempsRef.current = { t1, t2, t3 };
     }
 
-    const deltaT = Number((t2 - t1).toFixed(2));
+    const deltaAir = calculateDeltaAir(t1, t2);
 
     const demoPayload = {
-      status: 'demo',
+      status: CONNECTION_STATUS.DEMO,
       uptime: Date.now() % 10000000,
-      deltaT,
+      deltaAir,
       sensors: [
         { id: 0, name: 'T1 Khi vao dan lanh', temp: t1, online: true },
         { id: 1, name: 'T2 Khi ra dan lanh', temp: t2, online: true },
@@ -86,11 +98,11 @@ export function useTemperatures(initialInterval = 1500) {
     };
 
     setData(demoPayload);
-    setConnectionStatus('demo');
+    setConnectionStatus(CONNECTION_STATUS.DEMO);
     setLastUpdated(now);
     setHistory((prev) => [
-      ...prev.slice(-29),
-      { time: timeStr, t1, t2, t3, deltaT }
+      ...prev.slice(-(MONITORING_CONFIG.historyMaxPoints - 1)),
+      { time: timeStr, t1, t2, t3, deltaAir }
     ]);
   }, [isAutoSim]);
 
@@ -100,20 +112,28 @@ export function useTemperatures(initialInterval = 1500) {
       return;
     }
 
+    if (requestControllerRef.current) return;
+
+    const controller = new AbortController();
+    requestControllerRef.current = controller;
+
     try {
-      const res = await getTemperatures();
+      const res = await getTemperatures(controller.signal);
 
       if (!isMountedRef.current) return;
 
       setData(res);
       setLastUpdated(new Date());
 
-      if (failCountRef.current > 0 || connectionStatus !== 'connected') {
+      if (failCountRef.current > 0 || connectionStatusRef.current !== CONNECTION_STATUS.CONNECTED) {
         addLog('success', 'Kết nối thành công với ESP32');
       }
 
       failCountRef.current = 0;
-      setConnectionStatus('connected');
+      lastErrorCodeRef.current = null;
+      const nextStatus = statusAfterSuccess();
+      connectionStatusRef.current = nextStatus;
+      setConnectionStatus(nextStatus);
 
       const timeStr = new Date().toLocaleTimeString('vi-VN', { hour12: false });
       const t1 = res.sensors?.[0]?.online ? res.sensors[0].temp : null;
@@ -121,8 +141,8 @@ export function useTemperatures(initialInterval = 1500) {
       const t3 = res.sensors?.[2]?.online ? res.sensors[2].temp : null;
 
       setHistory((prev) => [
-        ...prev.slice(-29),
-        { time: timeStr, t1, t2, t3, deltaT: res.deltaT }
+        ...prev.slice(-(MONITORING_CONFIG.historyMaxPoints - 1)),
+        { time: timeStr, t1, t2, t3, deltaAir: res.deltaAir }
       ]);
 
       res.sensors?.forEach((s) => {
@@ -131,22 +151,26 @@ export function useTemperatures(initialInterval = 1500) {
         }
       });
 
-    } catch {
-      if (!isMountedRef.current) return;
+    } catch (error) {
+      const normalizedError = normalizeTelemetryError(error);
+
+      if (!isMountedRef.current || normalizedError.code === TELEMETRY_ERROR_CODE.ABORTED) return;
 
       failCountRef.current += 1;
 
-      if (failCountRef.current >= 3) {
-        setConnectionStatus('offline');
-      } else {
-        setConnectionStatus('reconnecting');
+      const nextStatus = statusAfterFailure(failCountRef.current);
+      connectionStatusRef.current = nextStatus;
+      setConnectionStatus(nextStatus);
+
+      if (failCountRef.current === 1 || lastErrorCodeRef.current !== normalizedError.code) {
+        addLog('error', telemetryErrorMessage(normalizedError));
       }
 
-      if (failCountRef.current === 1) {
-        addLog('error', `Chưa nhận được tín hiệu từ ESP32. Đang tự động kết nối lại...`);
-      }
+      lastErrorCodeRef.current = normalizedError.code;
+    } finally {
+      if (requestControllerRef.current === controller) requestControllerRef.current = null;
     }
-  }, [isDemoMode, connectionStatus, addLog, generateDemoData]);
+  }, [isDemoMode, addLog, generateDemoData]);
 
   useEffect(() => {
     isMountedRef.current = true;
@@ -159,6 +183,8 @@ export function useTemperatures(initialInterval = 1500) {
     return () => {
       isMountedRef.current = false;
       clearInterval(timer);
+      requestControllerRef.current?.abort();
+      requestControllerRef.current = null;
     };
   }, [pollingInterval, fetchData]);
 

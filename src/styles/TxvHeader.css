@@ -1,0 +1,133 @@
+/* TxvHeader
+   Component-scoped TXV styles. Class names intentionally unchanged. */
+@scope (.txv-container) {
+.txv-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.txv-title-box {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-width: 0;
+}
+
+.txv-title-box > div:last-child {
+  min-width: 0;
+}
+
+.txv-logo-badge {
+  width: 54px;
+  height: 54px;
+  flex: 0 0 54px;
+  border-radius: var(--neu-radius-md);
+  background: var(--neu-surface);
+  box-shadow: var(--neu-shadow-raised-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  border: 1px solid var(--neu-border);
+}
+
+.txv-badge-tag {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--color-accent);
+  overflow-wrap: anywhere;
+}
+
+.txv-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--neu-ink);
+  letter-spacing: 0.02em;
+  margin: 2px 0;
+  overflow-wrap: anywhere;
+}
+
+.txv-subtitle {
+  font-size: 0.82rem;
+  color: var(--neu-ink-muted);
+  overflow-wrap: anywhere;
+}
+
+.txv-mode-selector {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.btn-mode-pill {
+  padding: 10px 18px;
+  border-radius: var(--neu-radius-md);
+  background: var(--neu-surface);
+  color: var(--neu-ink);
+  border: 1px solid var(--neu-border);
+  box-shadow: var(--neu-shadow-raised-sm);
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.btn-mode-pill:hover {
+  box-shadow: var(--neu-shadow-raised);
+  transform: translateY(-1px);
+}
+
+.btn-mode-pill:active {
+  box-shadow: var(--neu-shadow-pressed);
+  transform: translateY(1px);
+}
+
+.btn-mode-pill.active {
+  box-shadow: var(--neu-shadow-pressed);
+  color: var(--color-accent);
+  font-weight: 800;
+}
+
+@media (max-width: 480px) {
+  .txv-header {
+    align-items: stretch;
+    gap: 14px;
+  }
+
+  .txv-title-box {
+    align-items: flex-start;
+    width: 100%;
+    gap: 10px;
+  }
+
+  .txv-logo-badge {
+    width: 44px;
+    height: 44px;
+    flex-basis: 44px;
+    font-size: 20px;
+  }
+
+  .txv-title {
+    font-size: 1.05rem;
+    line-height: 1.25;
+  }
+
+  .txv-mode-selector {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    width: 100%;
+  }
+
+  .btn-mode-pill {
+    width: 100%;
+    padding: 10px 12px;
+    white-space: normal;
+  }
+}
+}

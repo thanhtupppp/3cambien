@@ -1,11 +1,12 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import net from 'net';
+import { CONNECTION_STATUS } from './src/constants/connectionStatus.js';
 
 let currentTemps = {
-  status: 'offline',
+  status: CONNECTION_STATUS.OFFLINE,
   uptime: 0,
-  deltaT: null,
+  deltaAir: null,
   sensors: [
     { id: 0, name: 'T1 Khi vao dan lanh', temp: null, online: false },
     { id: 1, name: 'T2 Khi ra dan lanh', temp: null, online: false },
@@ -14,6 +15,8 @@ let currentTemps = {
 };
 
 let startTime = Date.now();
+const SENSOR_TTL_MS = 5000;
+const sensorLastSeen = [0, 0, 0];
 
 function createWokwiBridgePlugin() {
   let client = null;
@@ -27,7 +30,7 @@ function createWokwiBridgePlugin() {
 
       client.on('connect', () => {
         console.log('[Wokwi Bridge] ✅ Đã kết nối tới Wokwi Serial qua port 4000!');
-        currentTemps.status = 'online';
+        currentTemps.status = CONNECTION_STATUS.CONNECTING;
         startTime = Date.now();
       });
 
@@ -42,7 +45,8 @@ function createWokwiBridgePlugin() {
           if (t1Match) {
             currentTemps.sensors[0].temp = parseFloat(t1Match[1]);
             currentTemps.sensors[0].online = true;
-            currentTemps.status = 'online';
+            sensorLastSeen[0] = Date.now();
+            currentTemps.status = CONNECTION_STATUS.CONNECTED;
           }
 
           // Parse: T2 Khi ra dan lanh : 51.38 C
@@ -50,7 +54,8 @@ function createWokwiBridgePlugin() {
           if (t2Match) {
             currentTemps.sensors[1].temp = parseFloat(t2Match[1]);
             currentTemps.sensors[1].online = true;
-            currentTemps.status = 'online';
+            sensorLastSeen[1] = Date.now();
+            currentTemps.status = CONNECTION_STATUS.CONNECTED;
           }
 
           // Parse: T3 Ong gas hoi ve  : 48.19 C
@@ -58,14 +63,17 @@ function createWokwiBridgePlugin() {
           if (t3Match) {
             currentTemps.sensors[2].temp = parseFloat(t3Match[1]);
             currentTemps.sensors[2].online = true;
-            currentTemps.status = 'online';
+            sensorLastSeen[2] = Date.now();
+            currentTemps.status = CONNECTION_STATUS.CONNECTED;
           }
 
-          // Tính deltaT nếu cả 2 cảm biến T1, T2 đều có giá trị
+          // Tính ΔTair = T1 khí vào - T2 khí ra khi cả hai cảm biến hợp lệ
           const s1 = currentTemps.sensors[0].temp;
           const s2 = currentTemps.sensors[1].temp;
-          if (s1 !== null && s2 !== null) {
-            currentTemps.deltaT = parseFloat((s2 - s1).toFixed(2));
+          if (currentTemps.sensors[0].online && currentTemps.sensors[1].online && s1 !== null && s2 !== null) {
+            currentTemps.deltaAir = parseFloat((s1 - s2).toFixed(2));
+          } else {
+            currentTemps.deltaAir = null;
           }
           currentTemps.uptime = Date.now() - startTime;
         }
@@ -73,12 +81,12 @@ function createWokwiBridgePlugin() {
 
       client.on('error', () => {
         // Wokwi chưa bật port 4000 hoặc đã dừng
-        currentTemps.status = 'offline';
+        currentTemps.status = CONNECTION_STATUS.OFFLINE;
       });
 
       client.on('close', () => {
         client = null;
-        currentTemps.status = 'offline';
+        currentTemps.status = CONNECTION_STATUS.OFFLINE;
         setTimeout(connectToWokwi, 2000);
       });
     } catch {
@@ -96,6 +104,16 @@ function createWokwiBridgePlugin() {
     name: 'wokwi-bridge',
     configureServer(server) {
       server.middlewares.use('/api/temperatures', (req, res) => {
+        const now = Date.now();
+        currentTemps.sensors.forEach((sensor, index) => {
+          if (sensorLastSeen[index] && now - sensorLastSeen[index] > SENSOR_TTL_MS) {
+            sensor.online = false;
+          }
+        });
+        if (!currentTemps.sensors.some((sensor) => sensor.online)) currentTemps.status = CONNECTION_STATUS.OFFLINE;
+        if (!currentTemps.sensors[0].online || !currentTemps.sensors[1].online) currentTemps.deltaAir = null;
+        currentTemps.uptime = now - startTime;
+
         res.setHeader('Content-Type', 'application/json');
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.end(JSON.stringify(currentTemps));
@@ -104,10 +122,12 @@ function createWokwiBridgePlugin() {
   };
 }
 
-export default defineConfig({
-  plugins: [react(), createWokwiBridgePlugin()],
+export default defineConfig(({ command }) => ({
+  // Keep the legacy serial bridge out of production/CI builds. It remains
+  // available only while running the Vite development server.
+  plugins: [react(), ...(command === 'serve' ? [createWokwiBridgePlugin()] : [])],
   server: {
     port: 5173,
     host: true
   }
-});
+}));

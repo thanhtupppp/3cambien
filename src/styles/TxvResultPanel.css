@@ -1,0 +1,361 @@
+/* TxvResultPanel
+   Component-scoped TXV styles. Class names intentionally unchanged. */
+@scope (.txv-container) {
+/* --------------------------------------------------------------------------
+   Calculation Results & 3D Danfoss Screw Panel
+   -------------------------------------------------------------------------- */
+.txv-result-panel {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.result-metric-box,
+.result-tuner-screw-box {
+  padding: 24px 28px;
+  border-radius: var(--neu-radius-md);
+  background: var(--neu-surface);
+  box-shadow: var(--neu-shadow-raised-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.result-metric-header,
+.screw-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.result-metric-tag,
+.screw-tag {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--neu-ink-muted);
+}
+
+.status-badge-lg {
+  padding: 6px 14px;
+  border-radius: var(--neu-radius-full);
+  background: var(--neu-surface);
+  box-shadow: var(--neu-shadow-pressed-sm);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.status-badge-lg.optimal { color: var(--color-optimal); }
+.status-badge-lg.low { color: var(--color-cold); }
+.status-badge-lg.high { color: var(--color-danger); }
+
+.metric-displays-row {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.sh-display-well {
+  flex: 1;
+  min-width: 140px;
+  padding: 16px 18px;
+  border-radius: var(--neu-radius-md);
+  background: var(--neu-surface);
+  box-shadow: var(--neu-shadow-pressed-deep);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sh-well-label {
+  font-size: 0.75rem;
+  color: var(--neu-ink-muted);
+  font-weight: 600;
+}
+
+.sh-well-value {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.sh-number {
+  font-family: var(--font-mono);
+  font-size: 2.3rem;
+  font-weight: 800;
+  color: var(--neu-ink);
+}
+
+.sh-number.delta-high { color: var(--color-danger); }
+.sh-number.delta-low { color: var(--color-cold); }
+
+.sh-unit {
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--neu-ink-muted);
+}
+
+.sh-formula {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--neu-ink-muted);
+}
+
+/* Superheat Gauge */
+.sh-gauge-container {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 4px;
+}
+
+.gauge-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.72rem;
+  font-weight: 600;
+  font-family: var(--font-mono);
+}
+
+.g-label.flood { color: var(--color-cold); }
+.g-label.opt { color: var(--color-optimal); }
+.g-label.starve { color: var(--color-danger); }
+
+.neu-gauge-track {
+  position: relative;
+  height: 14px;
+  border-radius: var(--neu-radius-full);
+  background: var(--neu-surface);
+  box-shadow: var(--neu-shadow-pressed);
+  overflow: visible;
+}
+
+.neu-gauge-fill {
+  height: 100%;
+  border-radius: var(--neu-radius-full);
+  transition: width 0.35s ease, background-color 0.35s ease;
+}
+
+.gauge-target-marker {
+  position: absolute;
+  top: -6px;
+  transform: translateX(-50%);
+  font-size: 14px;
+  pointer-events: none;
+}
+
+/* --------------------------------------------------------------------------
+   3D Neumorphic Danfoss Screw
+   -------------------------------------------------------------------------- */
+.screw-valve-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--neu-ink);
+}
+
+.screw-interactive-area {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+/* 3D Round Screw Head */
+.neu-screw-disc {
+  width: 110px;
+  height: 110px;
+  min-width: 110px;
+  border-radius: 50%;
+  background: var(--neu-surface);
+  box-shadow: var(--neu-shadow-raised);
+  border: 2px solid var(--neu-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: transform 0.4s ease, box-shadow 0.3s ease;
+}
+
+.screw-center-groove {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: var(--neu-surface);
+  box-shadow: var(--neu-shadow-pressed);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.screw-slot-horizontal {
+  position: absolute;
+  width: 32px;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--neu-ink-muted);
+  opacity: 0.6;
+}
+
+.screw-slot-vertical {
+  position: absolute;
+  width: 6px;
+  height: 32px;
+  border-radius: 3px;
+  background: var(--neu-ink-muted);
+  opacity: 0.6;
+}
+
+.neu-screw-disc.cw {
+  animation: rotate-cw-subtle 4s infinite ease-in-out;
+}
+
+.neu-screw-disc.ccw {
+  animation: rotate-ccw-subtle 4s infinite ease-in-out;
+}
+
+@keyframes rotate-cw-subtle {
+  0% { transform: rotate(0deg); }
+  50% { transform: rotate(45deg); }
+  100% { transform: rotate(0deg); }
+}
+
+@keyframes rotate-ccw-subtle {
+  0% { transform: rotate(0deg); }
+  50% { transform: rotate(-45deg); }
+  100% { transform: rotate(0deg); }
+}
+
+.screw-arrow-cw,
+.screw-arrow-ccw,
+.screw-ok-badge {
+  position: absolute;
+  bottom: -8px;
+  padding: 2px 8px;
+  border-radius: var(--neu-radius-full);
+  background: var(--neu-surface);
+  box-shadow: var(--neu-shadow-raised-xs);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.screw-arrow-cw { color: var(--color-warning); }
+.screw-arrow-ccw { color: var(--color-cold); }
+.screw-ok-badge { color: var(--color-optimal); }
+
+/* Details text next to screw */
+.screw-action-details {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.action-direction-box {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.action-label {
+  font-size: 0.75rem;
+  color: var(--neu-ink-muted);
+  font-weight: 700;
+}
+
+.action-direction-text {
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.dir-cw { color: var(--color-warning); }
+.dir-ccw { color: var(--color-cold); }
+.dir-ok { color: var(--color-optimal); }
+
+.action-explanation {
+  font-size: 0.82rem;
+  color: var(--neu-ink);
+  line-height: 1.45;
+}
+
+.danfoss-rule-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: var(--neu-radius-sm);
+  background: var(--neu-surface);
+  box-shadow: var(--neu-shadow-pressed-sm);
+  font-size: 0.78rem;
+  color: var(--neu-ink-muted);
+  line-height: 1.4;
+}
+
+.alert-icon {
+  font-size: 18px;
+}
+
+.sh-source-tag {
+  font-size: 0.72rem;
+  color: var(--neu-ink-muted);
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+  @media (max-width: 768px) {
+    .txv-result-panel {
+      grid-template-columns: minmax(0, 1fr) !important;
+    }
+
+    .result-metric-box,
+    .result-tuner-screw-box {
+      min-width: 0;
+    }
+
+    .screw-interactive-area {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .screw-action-details {
+      width: 100%;
+      min-width: 0;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .result-metric-box,
+    .result-tuner-screw-box {
+      padding: 16px;
+      gap: 14px;
+    }
+
+    .metric-displays-row {
+      flex-direction: column;
+    }
+
+    .sh-display-well {
+      min-width: 0;
+      padding: 14px;
+    }
+
+    .sh-number {
+      font-size: 1.9rem;
+    }
+
+    .gauge-labels {
+      gap: 6px;
+      flex-wrap: wrap;
+      font-size: 0.64rem;
+    }
+
+    .action-direction-text,
+    .action-explanation,
+    .danfoss-rule-alert {
+      overflow-wrap: anywhere;
+    }
+  }
+}

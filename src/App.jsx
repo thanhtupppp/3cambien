@@ -7,9 +7,15 @@ import { RealtimeChart } from './components/RealtimeChart';
 import { EventLog } from './components/EventLog';
 import { ControlPanel } from './components/ControlPanel';
 import { TxvTuner } from './components/TxvTuner';
+import { calculateDeltaAir } from './utils/temperatureMetrics';
+import { CONNECTION_STATUS, isOnlineConnectionStatus } from './constants/connectionStatus';
 
 export default function App() {
-  const [theme, setTheme] = React.useState('light');
+  const [theme, setTheme] = React.useState(() => {
+    const saved = localStorage.getItem('dashboard-theme');
+    if (saved === 'light' || saved === 'dark') return saved;
+    return window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  });
 
   const toggleTheme = () => {
     setTheme((prev) => {
@@ -21,6 +27,7 @@ export default function App() {
 
   React.useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('dashboard-theme', theme);
   }, [theme]);
 
   const {
@@ -37,7 +44,7 @@ export default function App() {
     manualTemps,
     setManualTemp,
     refetch
-  } = useTemperatures(1500);
+  } = useTemperatures();
 
   const sensors = data?.sensors || [
     { id: 0, name: 'T1 Khi vao dan lanh', temp: null, online: false },
@@ -48,7 +55,9 @@ export default function App() {
   const t1 = sensors[0]?.online ? sensors[0].temp : null;
   const t2 = sensors[1]?.online ? sensors[1].temp : null;
   const t3 = sensors[2]?.online ? sensors[2].temp : null;
-  const deltaT = data?.deltaT ?? (t1 !== null && t2 !== null ? t2 - t1 : null);
+  const deltaAir = Number.isFinite(data?.deltaAir)
+    ? data.deltaAir
+    : calculateDeltaAir(t1, t2);
 
   const [activeTab, setActiveTab] = React.useState('txv'); // 'txv' | 'monitor' | 'all'
 
@@ -98,7 +107,7 @@ export default function App() {
       </nav>
 
       {/* Guide Banner if Offline */}
-      {connectionStatus === 'offline' && !isDemoMode && (
+      {connectionStatus === CONNECTION_STATUS.OFFLINE && !isDemoMode && (
         <div className="neu-panel offline-banner">
           <div className="offline-banner-icon">⚠️</div>
           <div className="offline-banner-text">
@@ -125,13 +134,13 @@ export default function App() {
           liveT1={t1}
           liveT2={t2}
           liveT3={t3}
-          isOnline={connectionStatus !== 'offline'}
+          isOnline={isOnlineConnectionStatus(connectionStatus)}
         />
       )}
 
       {/* Tab: Giám Sát Cảm Biến Dàn Lạnh */}
       {(activeTab === 'monitor' || activeTab === 'all') && (
-        <>
+        <div className="monitor-workspace">
           {/* 3 Temperature Cards */}
           <section className="cards-grid">
             {sensors.map((sensor, idx) => (
@@ -146,14 +155,14 @@ export default function App() {
           </section>
 
           {/* Delta T Performance Metric */}
-          <DeltaMetric t1={t1} t2={t2} deltaT={deltaT} />
+          <DeltaMetric t1={t1} t2={t2} deltaAir={deltaAir} />
 
           {/* Real-time Line Chart */}
           <RealtimeChart history={history} />
 
           {/* Event Log */}
           <EventLog logs={logs} />
-        </>
+        </div>
       )}
     </div>
   );

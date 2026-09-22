@@ -1,0 +1,133 @@
+/* PhDiagram
+   Component-scoped TXV styles. Class names intentionally unchanged. */
+@scope (.txv-container) {
+.ph-diagram-container {
+  margin-top: 1.5rem;
+  padding: 1.5rem;
+  border-radius: var(--neu-radius-lg);
+  background: var(--neu-surface);
+  box-shadow: var(--neu-shadow-raised);
+}
+
+.ph-diagram-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.ph-diagram-title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--neu-ink);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.ph-diagram-legend {
+  display: flex;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--neu-border);
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.82rem;
+  color: var(--neu-ink-muted);
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: var(--neu-radius-full);
+  background: var(--neu-surface);
+  box-shadow: var(--neu-shadow-raised-xs);
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.ph-diagram-wrapper {
+  position: relative;
+  overflow-x: auto;
+  padding: 10px 0;
+  display: flex;
+  justify-content: center;
+}
+
+.ph-diagram-svg {
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--neu-radius-sm);
+  background: var(--neu-surface);
+  box-shadow: var(--neu-shadow-pressed-sm);
+  padding: 8px;
+}
+
+.ph-diagram-params {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.param-badge {
+  padding: 0.35rem 0.75rem;
+  background: var(--neu-surface);
+  box-shadow: var(--neu-shadow-raised-xs);
+  border-radius: var(--neu-radius-full);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--neu-ink);
+  font-family: var(--font-mono);
+}
+
+.param-badge.highlight-sh {
+  background: var(--color-optimal);
+  color: #ffffff;
+  box-shadow: none;
+}
+
+.diagram-warning {
+  padding: 10px 14px;
+  margin-bottom: 1.25rem;
+  border-radius: var(--neu-radius-sm);
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #ef4444;
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+@media (max-width: 480px) {
+  .ph-diagram-container {
+    padding: 12px;
+  }
+
+  .ph-diagram-title,
+  .ph-diagram-note,
+  .diagram-warning {
+    overflow-wrap: anywhere;
+  }
+
+  .ph-diagram-wrapper {
+    justify-content: flex-start;
+  }
+
+  .ph-diagram-svg {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .ph-diagram-params,
+  .ph-diagram-legend {
+    gap: 0.5rem;
+  }
+}
+}

@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
 import { REFRIGERANTS, tempToPressure } from "../data/danfossData";
+import '../styles/PhDiagram.css';
 
 const DIAGRAM_WIDTH = 700;
 const DIAGRAM_HEIGHT = 450;

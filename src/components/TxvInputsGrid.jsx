@@ -1,4 +1,5 @@
 import React from 'react';
+import '../styles/TxvInputsGrid.css';
 
 // Constants cho các mốc quá nhiệt mục tiêu phổ biến của Danfoss
 const TARGET_SH_PRESETS = [4.0, 6.0, 8.0];

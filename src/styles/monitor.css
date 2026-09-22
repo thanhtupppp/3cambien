@@ -1,0 +1,416 @@
+/* Sensor monitoring feature.
+   The .monitor-workspace scope isolates cards/charts/log selectors from TXV UI. */
+@scope (.monitor-workspace) {
+/* --------------------------------------------------------------------------
+   Temperature Cards (T1, T2, T3)
+   -------------------------------------------------------------------------- */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px;
+}
+
+.temp-card {
+  padding: 24px 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  position: relative;
+}
+
+/* Card Header */
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.card-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--neu-radius-md);
+  background: var(--neu-surface);
+  box-shadow: var(--neu-shadow-raised-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+}
+
+.card-titles {
+  display: flex;
+  flex-direction: column;
+}
+
+.card-tag {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--neu-ink-muted);
+}
+
+.card-name {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--neu-ink);
+}
+
+/* Recessed Digital Display Well */
+.card-body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.temp-display {
+  width: 100%;
+  padding: 20px 24px;
+  border-radius: var(--neu-radius-md);
+  background: var(--neu-surface);
+  box-shadow: var(--neu-shadow-pressed-deep);
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 6px;
+}
+
+.temp-number {
+  font-family: var(--font-mono);
+  font-size: 3rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--neu-ink);
+}
+
+.card-t1 .temp-number { color: var(--color-cold); }
+.card-t2 .temp-number { color: var(--color-warning); }
+.card-t3 .temp-number { color: var(--color-purple); }
+
+.temp-unit {
+  font-family: var(--font-mono);
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: var(--neu-ink-muted);
+}
+
+.temp-display.error .temp-number {
+  color: var(--neu-ink-muted);
+  letter-spacing: 0.1em;
+}
+
+/* Card Footer */
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 4px;
+}
+
+.badge-status {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 5px 12px;
+  border-radius: var(--neu-radius-full);
+  background: var(--neu-surface);
+  box-shadow: var(--neu-shadow-raised-xs);
+}
+
+.status-optimal { color: var(--color-optimal); }
+.status-normal { color: var(--color-cold); }
+.status-cold { color: var(--color-cold); }
+.status-warning { color: var(--color-warning); }
+.status-error { color: var(--color-danger); }
+
+.card-role {
+  font-size: 0.78rem;
+  color: var(--neu-ink-muted);
+  font-weight: 500;
+}
+
+/* --------------------------------------------------------------------------
+   Delta Metric Component (Hiệu suất Dàn Lạnh)
+   -------------------------------------------------------------------------- */
+.delta-container {
+  padding: 24px 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.delta-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.delta-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--neu-radius-md);
+  background: var(--neu-surface);
+  box-shadow: var(--neu-shadow-raised-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  color: var(--color-warning);
+}
+
+.delta-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--neu-ink-muted);
+}
+
+.delta-formula {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--neu-ink);
+  margin-top: 2px;
+}
+
+.delta-eval {
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+/* Recessed Delta T Gauge */
+.delta-right {
+  display: flex;
+  align-items: center;
+}
+
+.delta-badge {
+  padding: 14px 26px;
+  border-radius: var(--neu-radius-md);
+  background: var(--neu-surface);
+  box-shadow: var(--neu-shadow-pressed-deep);
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.delta-val {
+  font-family: var(--font-mono);
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: var(--neu-ink);
+}
+
+.delta-unit {
+  font-family: var(--font-mono);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--neu-ink-muted);
+}
+
+/* --------------------------------------------------------------------------
+   Realtime Chart Component (Sunken Bezel & High Contrast Lines)
+   -------------------------------------------------------------------------- */
+.chart-container {
+  padding: 24px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.chart-title-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.chart-icon {
+  font-size: 22px;
+  width: 42px;
+  height: 42px;
+  border-radius: var(--neu-radius-md);
+  background: var(--neu-surface);
+  box-shadow: var(--neu-shadow-raised-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chart-title-box h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--neu-ink);
+}
+
+.chart-subtitle {
+  font-size: 0.82rem;
+  color: var(--neu-ink-muted);
+}
+
+.chart-legend {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--neu-ink-muted);
+  padding: 6px 12px;
+  border-radius: var(--neu-radius-full);
+  background: var(--neu-surface);
+  box-shadow: var(--neu-shadow-raised-xs);
+}
+
+.legend-color {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.legend-color.t1 { background: var(--color-cold); box-shadow: 0 0 6px var(--color-cold); }
+.legend-color.t2 { background: var(--color-warning); box-shadow: 0 0 6px var(--color-warning); }
+.legend-color.t3 { background: var(--color-purple); box-shadow: 0 0 6px var(--color-purple); }
+
+/* Sunken Screen for SVG Chart */
+.svg-wrapper {
+  width: 100%;
+  border-radius: var(--neu-radius-md);
+  background: var(--neu-surface);
+  box-shadow: var(--neu-shadow-pressed-deep);
+  padding: 16px 12px 10px;
+  overflow: hidden;
+}
+
+.realtime-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* --------------------------------------------------------------------------
+   Event Log Component (Recessed Console)
+   -------------------------------------------------------------------------- */
+.log-container {
+  padding: 24px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.log-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.log-icon {
+  font-size: 22px;
+  width: 42px;
+  height: 42px;
+  border-radius: var(--neu-radius-md);
+  background: var(--neu-surface);
+  box-shadow: var(--neu-shadow-raised-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.log-header h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--neu-ink);
+}
+
+.log-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 220px;
+  overflow-y: auto;
+  padding: 12px;
+  border-radius: var(--neu-radius-md);
+  background: var(--neu-surface);
+  box-shadow: var(--neu-shadow-pressed);
+}
+
+.log-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  border-radius: var(--neu-radius-sm);
+  background: var(--neu-surface);
+  box-shadow: var(--neu-shadow-raised-xs);
+  font-size: 0.82rem;
+}
+
+.log-time {
+  font-family: var(--font-mono);
+  color: var(--neu-ink-muted);
+  font-size: 0.75rem;
+}
+
+.log-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 2px 8px;
+  border-radius: var(--neu-radius-sm);
+  background: var(--neu-surface);
+  box-shadow: var(--neu-shadow-pressed-sm);
+}
+
+.log-badge.info { color: var(--color-cold); }
+.log-badge.success { color: var(--color-optimal); }
+.log-badge.warning { color: var(--color-warning); }
+.log-badge.error { color: var(--color-danger); }
+
+.log-msg {
+  color: var(--neu-ink);
+  flex: 1;
+}
+
+.log-empty {
+  text-align: center;
+  padding: 24px;
+  color: var(--neu-ink-muted);
+  font-size: 0.85rem;
+}
+
+  @media (max-width: 768px) {
+    .delta-container,
+    .chart-container,
+    .log-container {
+      padding: 18px;
+    }
+
+    .delta-container {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .delta-right {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .cards-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+}

@@ -1,4 +1,5 @@
 import React from 'react';
+import '../styles/TxvResultPanel.css';
 
 // Constants
 const GAUGE_MAX_SH = 18;

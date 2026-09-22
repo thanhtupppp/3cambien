@@ -1,4 +1,5 @@
 import React from 'react';
+import { CONNECTION_STATUS } from '../constants/connectionStatus';
 
 export function Header({
   connectionStatus,
@@ -12,7 +13,7 @@ export function Header({
   toggleTheme
 }) {
   const formatUptime = (ms) => {
-    if (!ms) return '--:--:--';
+    if (ms === null || ms === undefined || !Number.isFinite(Number(ms))) return '--:--:--';
     const totalSec = Math.floor(ms / 1000);
     const h = String(Math.floor(totalSec / 3600)).padStart(2, '0');
     const m = String(Math.floor((totalSec % 3600) / 60)).padStart(2, '0');
@@ -31,14 +32,14 @@ export function Header({
     }
 
     switch (connectionStatus) {
-      case 'connected':
+      case CONNECTION_STATUS.CONNECTED:
         return (
           <div className="status-badge connected" role="status" aria-live="polite">
             <span className="status-dot"></span>
             <span>ESP32 ONLINE</span>
           </div>
         );
-      case 'reconnecting':
+      case CONNECTION_STATUS.RECONNECTING:
         return (
           <div className="status-badge reconnecting" role="status" aria-live="polite">
             <span className="status-dot"></span>
