@@ -33,8 +33,8 @@ Status values: Not Started / In Progress / Blocked / In Review / Done / Skipped
 | L-02 | Sửa uptime = 0 | thanhtupppp | Done | 2026-09-22 | 2026-09-22 |  | Header zero uptime guard |
 | L-03 | Thêm ESLint | thanhtupppp | Done | 2026-09-22 | 2026-09-22 |  | eslint.config.js + npm run lint |
 | L-04 | Thêm unit test framework | thanhtupppp | Done | 2026-09-22 | 2026-09-22 |  | Node.js node:test + npm test + 5 test suites |
-| L-05 | Thêm responsive E2E tests | thanhtupppp | In Review | 2026-09-22 |  | Chờ CI chạy Playwright | e2e/txv-responsive.spec.js + playwright.config.js + mobile CSS hardening |
-| L-06 | Thêm CI cho build/lint/test | thanhtupppp | In Review | 2026-09-22 |  | Chờ GitHub Actions xác nhận | .github/workflows/ci.yml: build + lint + unit + responsive E2E |
+| L-05 | Thêm responsive E2E tests | thanhtupppp | Done | 2026-09-22 | 2026-09-22 |  | e2e/txv-responsive.spec.js + Playwright 320/768/1024/1440; CI run 35694227294 PASS |
+| L-06 | Thêm CI cho build/lint/test | thanhtupppp | Done | 2026-09-22 | 2026-09-22 |  | .github/workflows/ci.yml; build + lint + unit + responsive E2E PASS in run 35694227294 |
 | L-07 | Gom magic numbers thành constants | thanhtupppp | Done | 2026-09-22 | 2026-09-22 |  | src/constants/monitoringConfig.js + src/constants/txvConfig.js; shared polling/history/timeout/TXV defaults |
 | L-08 | Viết documentation cho sensor/data model | thanhtupppp | Done | 2026-09-22 | 2026-09-22 |  | docs/sensor-data-model.md: T1/T2/T3, ΔTair, superheat, payload, freshness, connection semantics |
 
