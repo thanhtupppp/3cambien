@@ -34,7 +34,7 @@ Status values: Not Started / In Progress / Blocked / In Review / Done / Skipped
 | L-03 | Thêm ESLint | thanhtupppp | Done | 2026-09-22 | 2026-09-22 |  | eslint.config.js + npm run lint |
 | L-04 | Thêm unit test framework | thanhtupppp | Done | 2026-09-22 | 2026-09-22 |  | Node.js node:test + npm test + 5 test suites |
 | L-05 | Thêm responsive E2E tests | thanhtupppp | In Review | 2026-09-22 |  | Chờ CI chạy Playwright | e2e/txv-responsive.spec.js + playwright.config.js + mobile CSS hardening |
-| L-06 | Thêm CI cho build/lint/test | thanhtupppp | Not Started |  |  |  |  |
+| L-06 | Thêm CI cho build/lint/test | thanhtupppp | In Review | 2026-09-22 |  | Chờ GitHub Actions xác nhận | .github/workflows/ci.yml: build + lint + unit + responsive E2E |
 | L-07 | Gom magic numbers thành constants | thanhtupppp | Not Started |  |  |  |  |
 | L-08 | Viết documentation cho sensor/data model | thanhtupppp | Not Started |  |  |  |  |
 

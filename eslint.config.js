@@ -1,9 +1,9 @@
 export default [
   {
-    ignores: ['dist/**', 'node_modules/**']
+    ignores: ['dist/**', 'node_modules/**', 'playwright-report/**', 'test-results/**']
   },
   {
-    files: ['src/**/*.{js,jsx}', 'test/**/*.js', 'vite.config.js'],
+    files: ['src/**/*.{js,jsx}', 'test/**/*.js', 'e2e/**/*.js', 'vite.config.js', 'playwright.config.js'],
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',
@@ -20,8 +20,9 @@ export default [
         console: 'readonly',
         document: 'readonly',
         fetch: 'readonly',
+        getComputedStyle: 'readonly',
         localStorage: 'readonly',
-        Math: 'readonly',
+        process: 'readonly',
         setInterval: 'readonly',
         setTimeout: 'readonly',
         window: 'readonly'
