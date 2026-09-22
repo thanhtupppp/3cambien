@@ -282,7 +282,7 @@
 /* Controls row (custom room temp & TD) */
 .room-controls-row {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
   gap: 20px;
 }
 
@@ -331,7 +331,7 @@
 /* Calculations summary card */
 .room-calc-summary {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
   gap: 16px;
   padding: 16px 20px;
   border-radius: var(--neu-radius-md);
@@ -512,6 +512,37 @@
   @media (max-width: 768px) {
     :scope {
       padding: 18px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    :scope {
+      padding: 12px;
+      gap: 18px;
+    }
+
+    .txv-telemetry-bar,
+    .txv-room-target-panel,
+    .sim-cond-card {
+      padding: 14px;
+    }
+
+    .telemetry-col-left,
+    .telemetry-chips-row,
+    .room-target-title-box,
+    .room-input-label-row,
+    .input-label-row {
+      min-width: 0;
+    }
+
+    .room-input-label-row,
+    .input-label-row {
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+
+    .sim-cond-slider-row {
+      gap: 8px;
     }
   }
 }

@@ -8,13 +8,15 @@
     "build": "vite build",
     "preview": "vite preview",
     "test": "node --test",
-    "lint": "npx --yes eslint@9.39.1 . --max-warnings=0"
+    "lint": "npx --yes eslint@9.39.1 . --max-warnings=0",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
+    "@playwright/test": "^1.55.0",
     "@vitejs/plugin-react": "^4.3.1",
     "vite": "^5.4.2"
   }

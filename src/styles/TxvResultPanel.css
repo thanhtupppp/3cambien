@@ -307,12 +307,55 @@
 
   @media (max-width: 768px) {
     .txv-result-panel {
-      grid-template-columns: 1fr !important;
+      grid-template-columns: minmax(0, 1fr) !important;
+    }
+
+    .result-metric-box,
+    .result-tuner-screw-box {
+      min-width: 0;
     }
 
     .screw-interactive-area {
       flex-direction: column;
       align-items: center;
+    }
+
+    .screw-action-details {
+      width: 100%;
+      min-width: 0;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .result-metric-box,
+    .result-tuner-screw-box {
+      padding: 16px;
+      gap: 14px;
+    }
+
+    .metric-displays-row {
+      flex-direction: column;
+    }
+
+    .sh-display-well {
+      min-width: 0;
+      padding: 14px;
+    }
+
+    .sh-number {
+      font-size: 1.9rem;
+    }
+
+    .gauge-labels {
+      gap: 6px;
+      flex-wrap: wrap;
+      font-size: 0.64rem;
+    }
+
+    .action-direction-text,
+    .action-explanation,
+    .danfoss-rule-alert {
+      overflow-wrap: anywhere;
     }
   }
 }

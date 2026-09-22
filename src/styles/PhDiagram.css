@@ -7,6 +7,31 @@
   border-radius: var(--neu-radius-lg);
   background: var(--neu-surface);
   box-shadow: var(--neu-shadow-raised);
+@media (max-width: 480px) {
+  .ph-diagram-container {
+    padding: 12px;
+  }
+
+  .ph-diagram-title,
+  .ph-diagram-note,
+  .diagram-warning {
+    overflow-wrap: anywhere;
+  }
+
+  .ph-diagram-wrapper {
+    justify-content: flex-start;
+  }
+
+  .ph-diagram-svg {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .ph-diagram-params,
+  .ph-diagram-legend {
+    gap: 0.5rem;
+  }
+}
 }
 
 .ph-diagram-header {

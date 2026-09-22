@@ -7,6 +7,29 @@
   border-radius: var(--neu-radius-lg);
   background: var(--neu-surface);
   box-shadow: var(--neu-shadow-raised);
+@media (max-width: 480px) {
+  .txv-chart-container {
+    padding: 12px;
+  }
+
+  .txv-chart-title {
+    font-size: 0.95rem;
+    overflow-wrap: anywhere;
+  }
+
+  .txv-chart-wrapper {
+    justify-content: flex-start;
+  }
+
+  .txv-chart-svg {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .txv-chart-stats {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
 }
 
 .txv-chart-header {

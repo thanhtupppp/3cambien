@@ -6,11 +6,12 @@
    -------------------------------------------------------------------------- */
 .txv-inputs-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 290px), 1fr));
   gap: 20px;
 }
 
 .txv-input-card {
+  min-width: 0;
   padding: 20px 22px;
   border-radius: var(--neu-radius-md);
   background: var(--neu-surface);
@@ -24,11 +25,17 @@
   display: flex;
   align-items: center;
   gap: 12px;
+  min-width: 0;
+}
+
+.txv-card-header > div:last-child {
+  min-width: 0;
 }
 
 .txv-card-icon {
   width: 40px;
   height: 40px;
+  flex: 0 0 40px;
   border-radius: var(--neu-radius-sm);
   background: var(--neu-surface);
   box-shadow: var(--neu-shadow-raised-xs);
@@ -43,30 +50,35 @@
   font-weight: 700;
   letter-spacing: 0.08em;
   color: var(--neu-ink-muted);
+  overflow-wrap: anywhere;
 }
 
 .txv-card-title {
   font-size: 0.95rem;
   font-weight: 700;
   color: var(--neu-ink);
+  overflow-wrap: anywhere;
 }
 
 .txv-card-body {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  min-width: 0;
 }
 
 .input-group {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  min-width: 0;
 }
 
 .input-label {
   font-size: 0.8rem;
   color: var(--neu-ink-muted);
   font-weight: 600;
+  overflow-wrap: anywhere;
 }
 
 /* Sunken input field */
@@ -74,6 +86,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  min-width: 0;
   padding: 8px 14px;
   border-radius: var(--neu-radius-sm);
   background: var(--neu-surface);
@@ -81,6 +94,7 @@
 }
 
 .txv-number-input {
+  min-width: 0;
   background: transparent;
   border: none;
   outline: none;
@@ -151,6 +165,7 @@
   font-size: 0.72rem;
   color: var(--neu-ink-muted);
   font-style: italic;
+  overflow-wrap: anywhere;
 }
 
 /* ==========================================================================
@@ -180,6 +195,7 @@
 }
 
 .btn-source-chip {
+  max-width: 100%;
   padding: 6px 11px;
   border-radius: var(--neu-radius-sm);
   border: 1px solid transparent;
@@ -190,6 +206,7 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.15s ease;
+  white-space: normal;
 }
 
 .btn-source-chip:hover {
@@ -204,5 +221,15 @@
   font-weight: 700;
   border-color: rgba(2, 132, 199, 0.25);
   border-left: 3px solid var(--color-cold);
+}
+
+@media (max-width: 480px) {
+  .txv-inputs-grid {
+    gap: 14px;
+  }
+
+  .txv-input-card {
+    padding: 16px;
+  }
 }
 }
